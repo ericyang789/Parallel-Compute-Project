@@ -25,17 +25,17 @@ Milestone 2
 
 In a few sentences, what do you plan for the CS205 final project?
 
-For the project we will be working on a classification problem using genomics data. We are currently considering cell type classification or health group classification (i.e. whether individuals have come from healthy control cohorts or have a health condition). Our goal is to implement machine learning algorithms such as K-means clustering and PCA to achieve this whilst also using various parallelisation techniques in order to improve the performance of the chosen algorithms.
+For the project we will be working on a classification problem using genomics data, specifically RNA-seq or gene-expression data. We are currently considering sample type clustering or classification (i.e. determining whether individuals have come from healthy control cohorts or have a health condition). Our goal is to implement machine learning algorithms such as K-means clustering and PCA to achieve this whilst also using various parallelisation techniques in order to improve the performance of the chosen algorithms. Some potential areas we can parallelize for a k-means algorithm is in the computation of distances between vectors of samples, calculating cluster means, the assignment step, trying runs with different "k's", and using different initialization points to ensure the algorithm finds the true global optima.  
 
 - Data: Sequencing, genomics, RNA-seq...
 - Algorithms: ML algorithms, ie Kmeans, PCA...
-- Application: Cell type classification, or disease vs normal, etc 
+- Application: Cell type classification, or disease vs normal, etc
 - Different parallelization techniques
 - Different initializations...
 
 What course concepts will be used in the project? (Note that some concepts may not be covered yet) [3 - 5 sentences] *
 
-Initially, we will run diagnostics on the performance of the standard chosen algorithms in order to understand what sections of the code would benefit the most from parallelisation. Likewise, we will look into the scalability of the code. Exact course concepts to be implemented will depend on the results of this analysis however, we will likely be looking at techniques such as loop unrolling and matrix blocking. We also currently plan on using a compiler language and so will be looking at OpenACC and OpenMP.
+Initially, we will run diagnostics on the performance of the standard chosen algorithms in order to understand what sections of the code would benefit the most from parallelisation. Likewise, we will look into the scalability of the code. We plan on using a variety of different performance optimization techniques e.g.  loop unrolling, matrix blocking, loop interchange, etc. We also currently plan on using a compiler language and so will be looking at OpenACC and OpenMP. Specific details on which computing frameworks will be implemented (many core, multi core, shared memory, distributed memory, etc) will be decided on as the project matures. 
 
 
 - Some approaches: Big data stuff, different levels of parallelism (many core, multi core,
@@ -46,7 +46,7 @@ Initially, we will run diagnostics on the performance of the standard chosen alg
 
 What resources will you need to accomplish this task (AWS / compute cluster / etc.) Please let us know if you need help getting access to resources. We may be able to work with research computing for specific cases. [3-5 sentences] *
 
-The exact techniques we will use will depend on the outcome of the diagnostics tests so we are currently considering a multitude of possibilities leaving the doors open to the use of GPU computing and the use of clusters. We are likely to be using AWS EC2 and depending on whether we are working with raw sequencing data (which can be 100s of GB in size) we may require the use of S3.
+The exact techniques we will use will depend on the outcome of the diagnostics tests so we are currently considering a multitude of possibilities leaving the doors open to the use of GPU computing and the use of clusters. We are likely to be using AWS EC2 and depending on whether we are working with raw sequencing data (which can be 100s of GB in size) we may require the use of S3. We are also looking at the potential for heterogenous CPU-GPU computing and potentially comparing algoithmic performance on different platforms e.g. cloud computing vs supercomputer. 
 
 - AWS credits, not sure how much, GPU computing, clusters if we do MPI, Cannon cluster
 - Potential EBS storage (potentially hundreds of GB maybe more if raw sequencing data, but most likely we'll do expression data ie counts/TPM), S3 might be cheap
