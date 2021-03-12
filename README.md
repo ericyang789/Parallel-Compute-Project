@@ -15,10 +15,24 @@ Vague ideas:
 - Kmeans: different starting points, could be another parallelization dimension, communicate best result in the end. Also resource allocation if one node converges early.
 
 In a few sentences, what do you plan for the CS205 final project?
+- Data: Sequencing, genomics, RNA-seq...
+- Algorithms: ML algorithms, ie Kmeans, PCA...
+- Application: Cell type classification, or disease vs normal, etc 
+- Different parallelization techniques
+- Different initializations...
 
 What course concepts will be used in the project? (Note that some concepts may not be covered yet) [3 - 5 sentences] *
+- Some approaches: Big data stuff, different levels of parallelism (many core, multi core,
+- Diagnosis in the beginning, understand what part is taking the longest, biggest areas for max performance gain, scalability
+- Performance optimization
+- Loop unrolling, matrix blocking, row major vs column major, loop interchange...
+- Directives, openacc, openmp...
 
 What resources will you need to accomplish this task (AWS / compute cluster / etc.) Please let us know if you need help getting access to resources. We may be able to work with research computing for specific cases. [3-5 sentences] *
+- AWS credits, not sure how much, GPU computing, clusters if we do MPI, Cannon cluster
+- Potential EBS storage (potenntially hundreds of GB maybe more if raw sequencing data, but most likely we'll do expression data ie counts/TPM), S3 might be cheap
+- We might want to compare performance between cloud computing vs supercomputer
+- not sure what exact techniques but thinking about a multitude of possibilities, leaving doors open to do CPU-GPU, and clusters
 
 
 Q for TA: 
