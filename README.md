@@ -14,6 +14,13 @@ Vague ideas:
 - Off-topic but there have been some intereting publications of watermarking of audio files. The process is notoriously slow and some speed up is achieved through randomised SVD but could lend itself very well to this project
 - Kmeans: different starting points, could be another parallelization dimension, communicate best result in the end. Also resource allocation if one node converges early.
 
+In a few sentences, what do you plan for the CS205 final project?
+
+What course concepts will be used in the project? (Note that some concepts may not be covered yet) [3 - 5 sentences] *
+
+What resources will you need to accomplish this task (AWS / compute cluster / etc.) Please let us know if you need help getting access to resources. We may be able to work with research computing for specific cases. [3-5 sentences] *
+
+
 Q for TA: 
 - Novelty
 - Programming language
