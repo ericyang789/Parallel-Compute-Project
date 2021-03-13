@@ -35,7 +35,7 @@ For the project we will be working on a classification problem using genomics da
 
 What course concepts will be used in the project? (Note that some concepts may not be covered yet) [3 - 5 sentences] *
 
-Initially, we will run diagnostics on the performance of the standard chosen algorithms in order to understand what sections of the code would benefit the most from parallelisation. Likewise, we will look into the scalability of the code. We plan on using a variety of different performance optimization techniques e.g.  loop unrolling, matrix blocking, loop interchange, etc. We also currently plan on using a compiler language and so will be looking at OpenACC and OpenMP. Specific details on which computing frameworks will be implemented (many core, multi core, shared memory, distributed memory, etc) will be decided on as the project matures. 
+Initially, we will run diagnostics on the performance of the standard chosen algorithms in order to understand what sections of the code would benefit the most from parallelisation. Likewise, we will look into the scalability of the code. We plan on using a variety of different performance optimization techniques e.g.  loop unrolling, matrix blocking, loop interchange, etc. We also currently plan on using a compiler language and so will be looking at OpenACC and OpenMP. Specific details on which computing frameworks will be implemented (many core, multi core, shared memory, distributed memory, etc) will be decided on as the project matures further. 
 
 
 - Some approaches: Big data stuff, different levels of parallelism (many core, multi core,
