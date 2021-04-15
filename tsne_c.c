@@ -8,12 +8,12 @@
 /* Main function conduct the primary execution and is
  * equivalent to if __name__ == "__main__": in python */
 
-void pca(int n, int *d, double X[n][*d], int initial_dims){
+/*void pca(int n, int *d, double X[n][*d], int initial_dims){
 	*d=initial_dims;
 	printf("n: %d\n", n);
 	printf("d: %d\n", *d);
 
-}
+}*/
 
 void tsne(int n, int d, int no_dims, int initial_dims, double perplexity, double X[n][d], double Y[n][no_dims])
 {
