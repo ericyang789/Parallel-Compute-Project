@@ -1,8 +1,10 @@
 #include<stdio.h>
+#include <gsl/gsl_matrix.h>
 #include "mnist.h"
 #include "pca.h"
 #include "Hbeta.h"
 #include "x2p.h"
+
 /* This is a prototype C implementation of tsne*/
 
 /* Main function conduct the primary execution and is
@@ -15,20 +17,24 @@
 
 }*/
 
-void tsne(int n, int d, int no_dims, int initial_dims, double perplexity, double X[n][d], double Y[n][no_dims])
+void tsne(int n, int d, int no_dims, int initial_dims, double perplexity, gsl_matrix * X, double Y[n][no_dims])
 {
      int i;
 
      /* will update X and change its dim */
      printf("d: %d\n", d);
-     pca(n,&d,X, initial_dims);
-
-     printf("d: %d\n", d);
-
+     printf("n: %d\n", n);
+     gsl_matrix * pca_results = pca(n,&d,X, initial_dims);
+     
+     int k;
+     for (k=0; k<784; k++) {
+         printf("%1.1f ", gsl_matrix_get(pca_results, 0, k));
+         if ((k+1) % 50 == 0) putchar('\n');
+     }
 
 
      for (i=0; i<no_dims; i++) {
-         Y[0][i]=X[0][i];
+         Y[0][i]=gsl_matrix_get(X, 0, i);
      }
 
 
@@ -46,12 +52,12 @@ int main()
 
     // call to store mnist in array - give test_image size 2500 by 784
     // and test_label size 2500
-    load_mnist();
+    gsl_matrix * test_image = load_mnist();
 
     // print pixels of first data in test dataset
     int i;
     for (i=0; i<784; i++) {
-        printf("%1.1f ", test_image[0][i]);
+        printf("%1.1f ", gsl_matrix_get(test_image, 0, i));
         if ((i+1) % 28 == 0) putchar('\n');
     }
 
