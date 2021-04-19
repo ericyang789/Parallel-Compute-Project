@@ -5,6 +5,7 @@
 #include <gsl/gsl_blas.h>
 
 /*Implements pca on X with dims n x d to reduce to n x initial_dims*/
+
 gsl_matrix* pca(int n, int *d, const gsl_matrix * X, int initial_dims){
 	*d=initial_dims;
 	printf("n: %d\n", n);
