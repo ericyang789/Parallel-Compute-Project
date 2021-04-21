@@ -1,8 +1,9 @@
 #include<stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "mnist.h"
+#include "read_non_binary.h"
 #include "singular_value_decomposition.c"
+
 
 
 #define M 2500                                                            
@@ -71,12 +72,16 @@ void reduce_to_k(int new_dim, int n, double Vt[n][n], double Vtk[n][new_dim])
   
 // Initialise A - need to take away mean and calculate the covariance matrix                                               
 int main(){
+clock_t start, end;
 
 load_mnist();
 
 
 
 // Mean vector of size N - collects sum of each of N columns of test_image
+
+
+start = clock();
 
 for (int i=0; i<N; i++) {
 	for (int j=0; j<M; j++) {
@@ -137,6 +142,11 @@ reduce_to_k(K, N, V, Vtk);
 // Want to project A onto K dims ie. R=A*V.T[:,0:k] R = M X K
 
 mat_multiply(M, N, N, K, A, Vtk, R);
+
+end = clock()-start;
+
+double time_taken=((double)end)/CLOCKS_PER_SEC;
+printf("Time takes: %f",time_taken);
 
 /* Uncomment to produce the reconstruction Recon and intermediate Vtkt K X N
 transpose(N, K, Vtk, Vtkt);
