@@ -74,15 +74,18 @@ void reduce_to_k(int new_dim, int n, double Vt[n][n], double Vtk[n][new_dim])
 int main(){
 clock_t start, end;
 
+printf(" Starting to load data \n");
+
 load_mnist();
 
-
+printf(" Finished loading data \n");
 
 // Mean vector of size N - collects sum of each of N columns of test_image
 
 
 start = clock();
 
+printf(" Calculating means \n");
 for (int i=0; i<N; i++) {
 	for (int j=0; j<M; j++) {
 		col_mean[i]=col_mean[i]+test_image[j][i];
@@ -93,6 +96,7 @@ for (int i=0; i<N; i++) {
 }    
 
 
+printf(" Taking away means \n");
 // Taking mean away from data test_image
 for (int i=0; i<M; i++) {
 	for (int j=0; j<N; j++) {
@@ -103,7 +107,7 @@ for (int i=0; i<M; i++) {
 }   
 
  
-
+printf(" Calculating covariance matrix \n");
 // Calculating the covariance matrix S= np.dot(A.T, A)/M
 
 // Get A.T
@@ -115,20 +119,26 @@ mat_multiply(N, M, M, N, At, A, S);
 
 
 
-                                                                                             
+printf(" Starting SVD \n");                                                                                             
 dummy_array = (double*) malloc(N * sizeof(double));                    
 if (dummy_array == NULL) {printf(" No memory available\n"); exit(0); } 
                                                                           
 err = Singular_Value_Decomposition((double*) A, N, N, (double*) U,     
                               singular_values, (double*) V, dummy_array);   
                                                                            
-free(dummy_array);                                                     
+free(dummy_array);
+
+printf(" Finished SVD \n");    
+                                                     
 if (err < 0) printf(" Failed to converge\n");                          
-	else { printf(" The singular value decomposition of A is \n");   }
+	else { printf(" The first 20 singular values of A are \n");   }
 
 
-for (int i = 0; i<N; i++){
-               printf("%1.1f ", singular_values[i]);}
+for (int i = 0; i<20; i++){
+               printf("%1.1f ", singular_values[i]);
+	       printf("\n");
+
+}
 
 
 
@@ -137,16 +147,22 @@ for (int i = 0; i<N; i++){
 
 // Reduced V = N X N to K cols with N rows in Vtk Vtk = N X K
 
+printf(" Calculating first K columns of V \n");   
+
 reduce_to_k(K, N, V, Vtk);
 
 // Want to project A onto K dims ie. R=A*V.T[:,0:k] R = M X K
 
+printf(" Projecting onto K dims of V \n");   
+
 mat_multiply(M, N, N, K, A, Vtk, R);
+
+printf(" Done \n");   
 
 end = clock()-start;
 
 double time_taken=((double)end)/CLOCKS_PER_SEC;
-printf("Time takes: %f",time_taken);
+printf("Time taken: %f \n",time_taken);
 
 /* Uncomment to produce the reconstruction Recon and intermediate Vtkt K X N
 transpose(N, K, Vtk, Vtkt);
