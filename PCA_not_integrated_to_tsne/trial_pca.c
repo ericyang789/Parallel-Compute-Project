@@ -110,9 +110,12 @@ for (int i=0; i<M; i++) {
 printf(" Calculating covariance matrix \n");
 // Calculating the covariance matrix S= np.dot(A.T, A)/M
 
+ 
+printf(" Calculating covariance matrix: getting A.T \n");
 // Get A.T
 transpose(M, N, A, At);
 
+printf(" Calculating covariance matrix: getting A.T * A \n");
 // Calculate S
 mat_multiply(N, M, M, N, At, A, S);
 
