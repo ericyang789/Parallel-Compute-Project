@@ -7,8 +7,8 @@
 // set appropriate path for data
 #define TEST_IMAGE "single_cell_array_small.csv"
 
-#define SIZE 784 // 28*28
-#define NUM_TEST 2500
+#define SIZE 16384 // 28*28
+#define NUM_TEST 100
 #define LEN_INFO_IMAGE 4
 #define LEN_INFO_LABEL 2
 
@@ -27,7 +27,7 @@ unsigned char test_image_char[NUM_TEST][SIZE];
 unsigned char test_label_char[NUM_TEST][1];
 
 
-double test_image[NUM_TEST][SIZE];
+double data[NUM_TEST][SIZE];
 int test_label[NUM_TEST];
 
 
@@ -40,14 +40,14 @@ void read_mnist_char(char *file_path, int num_data, int len_info, int arr_n, uns
         fprintf(stderr, "couldn't open image file");
         exit(-1);
     }
-    
+
     read(fd, info_arr, len_info * sizeof(int));
-    
-   
-    
+
+
+
     // read-in mnist numbers (pixels|labels)
     for (i=0; i<num_data; i++) {
-        read(fd, data_char[i], arr_n * sizeof(unsigned char));   
+        read(fd, data_char[i], arr_n * sizeof(unsigned char));
     }
 
     close(fd);
@@ -71,15 +71,9 @@ void label_char2int(int num_data, unsigned char data_label_char[][1], int data_l
 }
 
 
-void load_mnist()
+void load_data()
 {
 
     read_mnist_char(TEST_IMAGE, NUM_TEST, LEN_INFO_IMAGE, SIZE, test_image_char, info_image);
-    image_char2double(NUM_TEST, test_image_char, test_image);
+    image_char2double(NUM_TEST, test_image_char, data);
 }
-
-
-
-
-
-
