@@ -12,7 +12,7 @@
 
 #define MAX_ITERATION_COUNT 30   // Maximum number of iterations
 
-//                        Internally Defined Routines 
+//                        Internally Defined Routines
 static void Householders_Reduction_to_Bidiagonal_Form(double* A, int nrows,
     int ncols, double* U, double* V, double* diagonal, double* superdiagonal );
 static int  Givens_Reduction_to_Diagonal_Form( int nrows, int ncols,
@@ -114,7 +114,7 @@ static void Sort_by_Decreasing_Singular_Values(int nrows, int ncols,
 //           ...                                                              //
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-int Singular_Value_Decomposition(double* A, int nrows, int ncols, double* U, 
+int Singular_Value_Decomposition(double* A, int nrows, int ncols, double* U,
                       double* singular_values, double* V, double* dummy_array)
 {
    Householders_Reduction_to_Bidiagonal_Form( A, nrows, ncols, U, V,
@@ -124,7 +124,7 @@ int Singular_Value_Decomposition(double* A, int nrows, int ncols, double* U,
                                 singular_values, dummy_array ) < 0) return -1;
 
    Sort_by_Decreasing_Singular_Values(nrows, ncols, singular_values, U, V);
-  
+
    return 0;
 }
 
@@ -219,30 +219,30 @@ static void Householders_Reduction_to_Bidiagonal_Form(double* A, int nrows,
    memcpy(U,A, sizeof(double) * nrows * ncols);
 
 //
- 
+
    diagonal[0] = 0.0;
    s = 0.0;
    scale = 0.0;
    for ( i = 0, pui = U, ip1 = 1; i < ncols; pui += ncols, i++, ip1++ ) {
       superdiagonal[i] = scale * s;
-//       
+//
 //                  Perform Householder transform on columns.
 //
-//       Calculate the normed squared of the i-th column vector starting at 
+//       Calculate the normed squared of the i-th column vector starting at
 //       row i.
 //
       for (j = i, pu = pui, scale = 0.0; j < nrows; j++, pu += ncols)
          scale += fabs( *(pu + i) );
-       
+
       if (scale > 0.0) {
          for (j = i, pu = pui, s2 = 0.0; j < nrows; j++, pu += ncols) {
             *(pu + i) /= scale;
             s2 += *(pu + i) * *(pu + i);
          }
 //
-//    
+//
 //       Chose sign of s which maximizes the norm
-//  
+//
          s = ( *(pui + i) < 0.0 ) ? sqrt(s2) : -sqrt(s2);
 //
 //       Calculate -2/u'u
@@ -252,7 +252,7 @@ static void Householders_Reduction_to_Bidiagonal_Form(double* A, int nrows,
 //       Transform remaining columns by the Householder transform.
 //
          *(pui + i) -= s;
-         
+
          for (j = ip1; j < ncols; j++) {
             for (k = i, si = 0.0, pu = pui; k < nrows; k++, pu += ncols)
                si += *(pu + i) * *(pu + j);
@@ -264,10 +264,10 @@ static void Householders_Reduction_to_Bidiagonal_Form(double* A, int nrows,
       }
       for (j = i, pu = pui; j < nrows; j++, pu += ncols) *(pu + i) *= scale;
       diagonal[i] = s * scale;
-//       
+//
 //                  Perform Householder transform on rows.
 //
-//       Calculate the normed squared of the i-th row vector starting at 
+//       Calculate the normed squared of the i-th row vector starting at
 //       column i.
 //
       s = 0.0;
@@ -292,9 +292,9 @@ static void Householders_Reduction_to_Bidiagonal_Form(double* A, int nrows,
             superdiagonal[k] = *(pui + k) / half_norm_squared;
          if ( i < (nrows - 1) ) {
             for (j = ip1, pu = pui + ncols; j < nrows; j++, pu += ncols) {
-               for (k = ip1, si = 0.0; k < ncols; k++) 
+               for (k = ip1, si = 0.0; k < ncols; k++)
                   si += *(pui + k) * *(pu + k);
-               for (k = ip1; k < ncols; k++) { 
+               for (k = ip1; k < ncols; k++) {
                   *(pu + k) += si * superdiagonal[k];
                }
             }
@@ -315,12 +315,12 @@ static void Householders_Reduction_to_Bidiagonal_Form(double* A, int nrows,
          pv = pvi + ncols;
          for (j = ip1; j < ncols; j++, pv += ncols)
             *(pv + i) = ( *(pui + j) / *(pui + ip1) ) / s;
-         for (j = ip1; j < ncols; j++) { 
+         for (j = ip1; j < ncols; j++) {
             si = 0.0;
             for (k = ip1, pv = pvi + ncols; k < ncols; k++, pv += ncols)
                si += *(pui + k) * *(pv + j);
             for (k = ip1, pv = pvi + ncols; k < ncols; k++, pv += ncols)
-               *(pv + j) += si * *(pv + i);                  
+               *(pv + j) += si * *(pv + i);
          }
       }
       pv = pvi + ncols;
@@ -339,20 +339,20 @@ static void Householders_Reduction_to_Bidiagonal_Form(double* A, int nrows,
       s = diagonal[i];
       for ( j = ip1; j < ncols; j++) *(pui + j) = 0.0;
       if ( s != 0.0 ) {
-         for (j = ip1; j < ncols; j++) { 
+         for (j = ip1; j < ncols; j++) {
             si = 0.0;
             pu = pui + ncols;
             for (k = ip1; k < nrows; k++, pu += ncols)
                si += *(pu + i) * *(pu + j);
             si = (si / *(pui + i) ) / s;
             for (k = i, pu = pui; k < nrows; k++, pu += ncols)
-               *(pu + j) += si * *(pu + i);                  
+               *(pu + j) += si * *(pu + i);
          }
          for (j = i, pu = pui; j < nrows; j++, pu += ncols){
             *(pu + i) /= s;
          }
       }
-      else 
+      else
          for (j = i, pu = pui; j < nrows; j++, pu += ncols) *(pu + i) = 0.0;
       *(pui + i) += 1.0;
    }
@@ -439,7 +439,7 @@ static int Givens_Reduction_to_Diagonal_Form( int nrows, int ncols,
    int i,j,k,m;
    int rotation_test;
    int iteration_count;
-  
+
    for (i = 0, x = 0.0; i < ncols; i++) {
       y = fabs(diagonal[i]) + fabs(superdiagonal[i]);
       if ( x < y ) x = y;
@@ -449,14 +449,14 @@ static int Givens_Reduction_to_Diagonal_Form( int nrows, int ncols,
       iteration_count = 0;
       while(1) {
          rotation_test = 1;
-         for (m = k; m >= 0; m--) { 
+         for (m = k; m >= 0; m--) {
             if (fabs(superdiagonal[m]) <= epsilon) {rotation_test = 0; break;}
             if (fabs(diagonal[m-1]) <= epsilon) break;
          }
          if (rotation_test) {
             c = 0.0;
             s = 1.0;
-            for (i = m; i <= k; i++) {  
+            for (i = m; i <= k; i++) {
                f = s * superdiagonal[i];
                superdiagonal[i] *= c;
                if (fabs(f) <= epsilon) break;
@@ -464,8 +464,8 @@ static int Givens_Reduction_to_Diagonal_Form( int nrows, int ncols,
                h = sqrt(f*f + g*g);
                diagonal[i] = h;
                c = g / h;
-               s = -f / h; 
-               for (j = 0, pu = U; j < nrows; j++, pu += ncols) { 
+               s = -f / h;
+               for (j = 0, pu = U; j < nrows; j++, pu += ncols) {
                   y = *(pu + m - 1);
                   z = *(pu + i);
                   *(pu + m - 1 ) = y * c + z * s;
@@ -477,7 +477,7 @@ static int Givens_Reduction_to_Diagonal_Form( int nrows, int ncols,
          if (m == k ) {
             if ( z < 0.0 ) {
                diagonal[k] = -z;
-               for ( j = 0, pv = V; j < ncols; j++, pv += ncols) 
+               for ( j = 0, pv = V; j < ncols; j++, pv += ncols)
                   *(pv + k) = - *(pv + k);
             }
             break;
@@ -520,7 +520,7 @@ static int Givens_Reduction_to_Diagonal_Form( int nrows, int ncols,
                if (z != 0.0) {
                   c = f / z;
                   s = h / z;
-               } 
+               }
                f = c * g + s * y;
                x = -s * g + c * y;
                for (j = 0, pu = U; j < nrows; j++, pu += ncols) {
@@ -534,7 +534,7 @@ static int Givens_Reduction_to_Diagonal_Form( int nrows, int ncols,
             superdiagonal[k] = f;
             diagonal[k] = x;
          }
-      } 
+      }
    }
    return 0;
 }
@@ -598,7 +598,7 @@ static void Sort_by_Decreasing_Singular_Values(int nrows, int ncols,
    for (i = 0; i < ncols - 1; i++) {
       max_index = i;
       for (j = i + 1; j < ncols; j++)
-         if (singular_values[j] > singular_values[max_index] ) 
+         if (singular_values[j] > singular_values[max_index] )
             max_index = j;
       if (max_index == i) continue;
       temp = singular_values[i];
@@ -610,7 +610,7 @@ static void Sort_by_Decreasing_Singular_Values(int nrows, int ncols,
          temp = *p1;
          *p1 = *p2;
          *p2 = temp;
-      } 
+      }
       p1 = V + max_index;
       p2 = V + i;
       for (j = 0; j < ncols; j++, p1 += ncols, p2 += ncols) {
@@ -618,7 +618,7 @@ static void Sort_by_Decreasing_Singular_Values(int nrows, int ncols,
          *p1 = *p2;
          *p2 = temp;
       }
-   } 
+   }
 }
 
 
@@ -684,8 +684,8 @@ static void Sort_by_Decreasing_Singular_Values(int nrows, int ncols,
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
 
-void Singular_Value_Decomposition_Solve(double* U, double* D, double* V,  
-                double tolerance, int nrows, int ncols, double *B, double* x) 
+void Singular_Value_Decomposition_Solve(double* U, double* D, double* V,
+                double tolerance, int nrows, int ncols, double *B, double* x)
 {
    int i,j,k;
    double *pu, *pv;
@@ -702,7 +702,7 @@ void Singular_Value_Decomposition_Solve(double* U, double* D, double* V,
                dum += *(pu + j) * B[k];
             x[i] += dum * *(pv + j) / D[j];
          }
-   } 
+   }
 }
 
 
@@ -765,8 +765,8 @@ void Singular_Value_Decomposition_Solve(double* U, double* D, double* V,
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
 
-void Singular_Value_Decomposition_Inverse(double* U, double* D, double* V,  
-                        double tolerance, int nrows, int ncols, double *Astar) 
+void Singular_Value_Decomposition_Inverse(double* U, double* D, double* V,
+                        double tolerance, int nrows, int ncols, double *Astar)
 {
    int i,j,k;
    double *pu, *pv, *pa;
@@ -774,8 +774,8 @@ void Singular_Value_Decomposition_Inverse(double* U, double* D, double* V,
 
    dum = DBL_EPSILON * D[0] * (double) ncols;
    if (tolerance < dum) tolerance = dum;
-   for ( i = 0, pv = V, pa = Astar; i < ncols; i++, pv += ncols) 
-      for ( j = 0, pu = U; j < nrows; j++, pa++) 
+   for ( i = 0, pv = V, pa = Astar; i < ncols; i++, pv += ncols)
+      for ( j = 0, pu = U; j < nrows; j++, pa++)
         for (k = 0, *pa = 0.0; k < ncols; k++, pu++)
            if (D[k] > tolerance) *pa += *(pv + k) * *pu / D[k];
 }
