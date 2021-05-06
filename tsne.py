@@ -15,6 +15,7 @@
 import numpy as np
 import pylab
 import idx2numpy
+import time
 
 
 
@@ -187,13 +188,19 @@ def tsne(X=np.array([]), no_dims=2, initial_dims=50, perplexity=30.0):
 if __name__ == "__main__":
     print("Run Y = tsne.tsne(X, no_dims, perplexity) to perform t-SNE on your dataset.")
     print("Running example on 2,500 MNIST digits...")
-    X = np.loadtxt("mnist2500_X.txt")
-    #X = idx2numpy.convert_from_file('data/t10k-images.idx3-ubyte')
+    #X = np.loadtxt("mnist2500_X.txt")
+    X = idx2numpy.convert_from_file('data/t10k-images.idx3-ubyte')
     #labels = np.loadtxt("mnist2500_labels.txt")
-    labels = idx2numpy.convert_from_file('data/t10k-labels.idx1-ubyte')
-    #N,R,C=X.shape
-    #X=X.reshape(N,R*C)
+    #labels = idx2numpy.convert_from_file('data/t10k-labels.idx1-ubyte')
+    N,R,C=X.shape
+    X=X.reshape(N,R*C)
+
+    print('N,R,C', N,R,C)
+    start = time.time()
+    R = pca(X, 50).real
+    end = time.time()
+    print('Time taken:', end - start)
     
-    Y = tsne(X, 2, 50, 20.0)
+    #Y = tsne(X, 2, 50, 20.0)
     #pylab.scatter(Y[:, 0], Y[:, 1], 20, labels)
     #pylab.show()

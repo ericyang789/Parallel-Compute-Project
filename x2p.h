@@ -101,7 +101,7 @@ void x2p(int n, int d, double X[n][d], double tol, double perplexity){
 
 
 
-	
+
 
 
 

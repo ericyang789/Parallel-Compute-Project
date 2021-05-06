@@ -6,6 +6,7 @@
 #include "Hbeta.h"
 #include "x2p.h"
 
+#define N 784
 /* This is a prototype C implementation of tsne*/
 
 /* Main function conduct the primary execution and is
@@ -36,10 +37,11 @@ void tsne(int n, int d, int no_dims, int initial_dims, double X[n][d])
      double iY[n][no_dims];
      double gains[n][no_dims];
 
+
      /* Initialise Y, dY, iY, gains */
 
      int i, j;
-     
+
 
      for (i = 0; i<n; i++){
 
@@ -52,7 +54,7 @@ void tsne(int n, int d, int no_dims, int initial_dims, double X[n][d])
 
 
 
-     /* will update X and project it onto initial_dims dimensions*/  
+     /* will update X and project it onto initial_dims dimensions*/
      /* n won't be updated (no samples), d will be updated to initial_dims */
 
      printf("(n,d): (%d , %d) \n", n,d);
@@ -62,12 +64,12 @@ void tsne(int n, int d, int no_dims, int initial_dims, double X[n][d])
      printf("(n,d): (%d , %d) \n", n,d);
 
 
-     for (i = 0; i<n; i++)
+     /*for (i = 0; i<n; i++)
      {
           for (j = 0; j<no_dims; j++)
                printf("%1.1f ", Y[i][j]);
                if ((j+1) % 28 == 0) putchar('\n');
-     }
+     }*/
 
 
      /*Compute P-values*/
@@ -77,14 +79,15 @@ void tsne(int n, int d, int no_dims, int initial_dims, double X[n][d])
      /*P = x2p(n,d,X, tol, perplexity)
      P = P + np.transpose(P)
      P = P / np.sum(P)
-     P = P * 4.									
+     P = P * 4.
      P = np.maximum(P, 1e-12)*/
 
 
 
 
-     
+
 }
+
 
 
 
@@ -109,7 +112,7 @@ int main()
 
     /* initial dims of X */
     int n=2500;
-    int d=784; 
+    int d=784;
 
     /* tsne dim */
     int no_dims=2;
@@ -118,7 +121,7 @@ int main()
     int initial_dims=50;
 
 
-
+    printf(" Starting tsne call\n");
     tsne( n, d, no_dims, initial_dims, test_image);
 
     /*tsne( n, d, no_dims, initial_dims, perplexity, test_image, Y);
@@ -130,6 +133,5 @@ int main()
 
     return 0;
 
-    
-}
 
+}
