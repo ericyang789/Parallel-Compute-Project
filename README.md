@@ -16,4 +16,9 @@ The t-SNE algorithm is especially popular in the field of single-cell transcript
 
 At its core, t-SNE involved a tremendous amount of matrix operations, especially given the size of gene expression matrices (order of hundreds or thousands of cells by tens of thousands of genes). In the PCA component of t-SNE, the numerical complexity of the sequential part grows by O(M squared), where M is the number of genes in our matrix while the parallel part grows by O(M cubed). The remainder of the t-SNE algorithm additionally grows by (X squared), where X is the number of cells in our M by N (number of cells) matrix. It is estimated that for a dataset size X of 25,000 data matrix values, a single core t-SNE run can take around 800 minutes [4]. Given gene expression matrices that can contain millions of values, a parallel implementation of t-SNE can significantly reduce computation time. In addition, currently, there is no C implementation of t-SNE that exists. We hypothesize that a successful parallel implementation of t-SNE in C would benefit the dimensionality reduction community, by providing customizable parallelizability in a lower level programming language with a multitude of parallelization infrastructures available.
 
+## References
+1.	Van der Maaten, L., & Hinton, G. (2008). Visualizing data using t-SNE. Journal of machine learning research, 9(11).
+2.	Kobak, D., & Berens, P. (2019). The art of using t-SNE for single-cell transcriptomics. Nature communications, 10(1), 5416. https://doi.org/10.1038/s41467-019-13056-x
+3.	Segerstolpe Å, Palasantza A, Eliasson P, Andersson EM, Andréasson AC et al. (2016) Single-Cell Transcriptome Profiling of Human Pancreatic Islets in Health and Type 2 Diabetes.
+4.	Performance Comparison of Dimension Reduction Implementations¶. Performance Comparison of Dimension Reduction Implementations - umap 0.5 documentation. (n.d.). https://umap-learn.readthedocs.io/en/latest/benchmarking.html. 
 
