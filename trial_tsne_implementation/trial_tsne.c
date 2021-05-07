@@ -58,6 +58,19 @@ int main(){
 
 	load_data();
 
+	
+	printf(" Printing the data \n");
+
+	for (int i=0; i<M; i++) {
+		for (int j=0; j<N; j++){
+			printf("%f  ",data[i][j]);
+		}
+		printf("\n");
+
+	}
+
+
+
 	printf(" Finished loading data \n");
 
 	// Mean vector of size N - collects sum of each of N columns of test_image
