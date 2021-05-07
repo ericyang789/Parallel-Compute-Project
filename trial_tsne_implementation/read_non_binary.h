@@ -5,9 +5,10 @@
 #include <string.h>
 
 // set appropriate path for data
-#define TEST_IMAGE "single_cell_array_small.csv"
+//#define TEST_IMAGE "single_cell_array_small.csv"
+#define TEST_IMAGE "single_cell_data_small_norm.csv"
 
-#define SIZE 16384 // 28*28
+#define SIZE 21413 // 28*28
 #define NUM_TEST 100
 #define LEN_INFO_IMAGE 4
 #define LEN_INFO_LABEL 2

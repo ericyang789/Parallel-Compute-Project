@@ -85,7 +85,7 @@ void image_char2double(int num_data, unsigned char data_image_char[][Ns], double
     int i, j;
     for (i=0; i<num_data; i++)
         for (j=0; j<Ns; j++)
-            data_image[i][j]  = (double)data_image_char[i][j] / 1.0;
+            data_image[i][j]  = (double)data_image_char[i][j] / 255.0;
 }
 
 
