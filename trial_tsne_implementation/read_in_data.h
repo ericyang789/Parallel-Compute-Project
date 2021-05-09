@@ -8,8 +8,8 @@
 #define DATA "../data/t10k-images.idx3-ubyte"
 #define DATA_LABEL "../data/t10k-labels.idx1-ubyte"
 
+#define Ms 8000 //NUM_TEST
 #define Ns 784 // 28*28
-#define Ms 2500 //NUM_TEST
 #define LEN_INFO_IMAGE 4
 #define LEN_INFO_LABEL 2
 
@@ -85,7 +85,7 @@ void image_char2double(int num_data, unsigned char data_image_char[][Ns], double
     int i, j;
     for (i=0; i<num_data; i++)
         for (j=0; j<Ns; j++)
-            data_image[i][j]  = (double)data_image_char[i][j] / 1.0;
+            data_image[i][j]  = (double)data_image_char[i][j] / 255.0;
 }
 
 

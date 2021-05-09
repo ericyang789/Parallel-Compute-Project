@@ -9,6 +9,7 @@
 #include <string.h>              // required for memcpy()
 #include <float.h>               // required for DBL_EPSILON
 #include <math.h>                // required for fabs(), sqrt();
+#include <time.h>
 
 #define MAX_ITERATION_COUNT 30   // Maximum number of iterations
 
@@ -116,16 +117,26 @@ static void Sort_by_Decreasing_Singular_Values(int nrows, int ncols,
 //                                                                            //
 int Singular_Value_Decomposition(double* A, int nrows, int ncols, double* U,
                       double* singular_values, double* V, double* dummy_array)
-{
-   Householders_Reduction_to_Bidiagonal_Form( A, nrows, ncols, U, V,
+{   clock_t start3, end3;
+	double time_taken;
+
+	start3 = clock();
+    Householders_Reduction_to_Bidiagonal_Form( A, nrows, ncols, U, V,
                                                 singular_values, dummy_array);
+	end3 = clock()-start3;	time_taken=((double)end3)/CLOCKS_PER_SEC; start3 = clock();
+	printf("Time (PCA - SVD - HouseHolders Reduction to Bidiagonal Form): %f \n",time_taken);
 
-   if (Givens_Reduction_to_Diagonal_Form( nrows, ncols, U, V,
+	
+    if (Givens_Reduction_to_Diagonal_Form( nrows, ncols, U, V,
                                 singular_values, dummy_array ) < 0) return -1;
+	end3 = clock()-start3;	time_taken=((double)end3)/CLOCKS_PER_SEC; start3 = clock();
+	printf("Time (PCA - SVD - Givens Reduction to Bidiagonal Form): %f \n",time_taken);
 
-   Sort_by_Decreasing_Singular_Values(nrows, ncols, singular_values, U, V);
+    Sort_by_Decreasing_Singular_Values(nrows, ncols, singular_values, U, V);
+	end3 = clock()-start3;	time_taken=((double)end3)/CLOCKS_PER_SEC;
+	printf("Time (PCA - SVD -Sort by Decreasing Singular Values): %f \n",time_taken);
 
-   return 0;
+    return 0;
 }
 
 
@@ -219,12 +230,19 @@ static void Householders_Reduction_to_Bidiagonal_Form(double* A, int nrows,
    memcpy(U,A, sizeof(double) * nrows * ncols);
 
 //
-
+   	clock_t start4, end4; 
+	start4 = clock();
+	double time_taken1, time_taken2, time_taken3,  time_taken4,  time_taken5,  time_taken6, time_taken7, \
+		  time_taken8, time_taken9, time_taken10, time_taken11, time_taken12, time_taken13, time_taken14;;
+  
    diagonal[0] = 0.0;
    s = 0.0;
    scale = 0.0;
    for ( i = 0, pui = U, ip1 = 1; i < ncols; pui += ncols, i++, ip1++ ) {
       superdiagonal[i] = scale * s;
+	
+	end4 = clock()-start4; time_taken1+=((double)end4)/CLOCKS_PER_SEC; start4 = clock();
+
 //
 //                  Perform Householder transform on columns.
 //
@@ -233,37 +251,57 @@ static void Householders_Reduction_to_Bidiagonal_Form(double* A, int nrows,
 //
       for (j = i, pu = pui, scale = 0.0; j < nrows; j++, pu += ncols)
          scale += fabs( *(pu + i) );
+	end4 = clock()-start4; time_taken2+=((double)end4)/CLOCKS_PER_SEC; start4 = clock();
 
       if (scale > 0.0) {
          for (j = i, pu = pui, s2 = 0.0; j < nrows; j++, pu += ncols) {
             *(pu + i) /= scale;
             s2 += *(pu + i) * *(pu + i);
          }
+	end4 = clock()-start4; time_taken3+=((double)end4)/CLOCKS_PER_SEC; start4 = clock();
+
 //
 //
 //       Chose sign of s which maximizes the norm
 //
          s = ( *(pui + i) < 0.0 ) ? sqrt(s2) : -sqrt(s2);
+	end4 = clock()-start4; time_taken4+=((double)end4)/CLOCKS_PER_SEC; start4 = clock();
+
 //
 //       Calculate -2/u'u
 //
          half_norm_squared = *(pui + i) * s - s2;
+	end4 = clock()-start4; time_taken5+=((double)end4)/CLOCKS_PER_SEC; start4 = clock();
+
 //
 //       Transform remaining columns by the Householder transform.
 //
          *(pui + i) -= s;
-
-         for (j = ip1; j < ncols; j++) {
-            for (k = i, si = 0.0, pu = pui; k < nrows; k++, pu += ncols)
-               si += *(pu + i) * *(pu + j);
-            si /= half_norm_squared;
-            for (k = i, pu = pui; k < nrows; k++, pu += ncols) {
-               *(pu + j) += si * *(pu + i);
-            }
-         }
+	end4 = clock()-start4; time_taken6+=((double)end4)/CLOCKS_PER_SEC; start4 = clock();
+		double si_;
+		//#pragma acc kernels create(si_)
+		{
+		//#pragma acc loop independent vector(32)
+		for (j = ip1; j < ncols; j++) {
+			si_ = 0.0;
+			//#pragma acc loop reduction(+:si)
+			for (k = i, pu = pui; k < nrows; k++, pu += ncols){
+				si_ += *(pu + i) * *(pu + j);
+			}
+			si_ /= half_norm_squared;
+			//#pragma acc loop independent
+			for (k = i, pu = pui; k < nrows; k++, pu += ncols) {
+				*(pu + j) += si_ * *(pu + i);
+			}
+		}
       }
+	}
+	end4 = clock()-start4; time_taken7+=((double)end4)/CLOCKS_PER_SEC; start4 = clock();
+
       for (j = i, pu = pui; j < nrows; j++, pu += ncols) *(pu + i) *= scale;
       diagonal[i] = s * scale;
+	end4 = clock()-start4; time_taken8+=((double)end4)/CLOCKS_PER_SEC; start4 = clock();
+
 //
 //                  Perform Householder transform on rows.
 //
@@ -280,42 +318,72 @@ static void Householders_Reduction_to_Bidiagonal_Form(double* A, int nrows,
             s2 += *(pui + j) * *(pui + j);
          }
          s = ( *(pui + ip1) < 0.0 ) ? sqrt(s2) : -sqrt(s2);
+	end4 = clock()-start4; time_taken9=((double)end4)/CLOCKS_PER_SEC; start4 = clock();
+
 //
 //       Calculate -2/u'u
 //
          half_norm_squared = *(pui + ip1) * s - s2;
+	end4 = clock()-start4; time_taken10+=((double)end4)/CLOCKS_PER_SEC; start4 = clock();
+
 //
 //       Transform the rows by the Householder transform.
-//
+//		
          *(pui + ip1) -= s;
          for (k = ip1; k < ncols; k++)
             superdiagonal[k] = *(pui + k) / half_norm_squared;
          if ( i < (nrows - 1) ) {
+		//#pragma acc data copyin()
+		//#pragma acc loop independent vector(32)
             for (j = ip1, pu = pui + ncols; j < nrows; j++, pu += ncols) {
+			//#pragma acc loop independent reduction(+:si)
                for (k = ip1, si = 0.0; k < ncols; k++)
                   si += *(pui + k) * *(pu + k);
+			//#pragma acc loop independent
                for (k = ip1; k < ncols; k++) {
                   *(pu + k) += si * superdiagonal[k];
                }
             }
          }
          for (k = ip1; k < ncols; k++) *(pui + k) *= scale;
+		
+		end4 = clock()-start4; time_taken11+=((double)end4)/CLOCKS_PER_SEC; start4 = clock();
       }
    }
-
+/*
+printf("Time (PCA - SVD - HouseHolders Reduction to Bidiagonal Form) parts:\n");
+printf("   - time_taken_1 :  %f \n",  time_taken1); 
+printf("   - time_taken_2 :  %f \n",  time_taken2); 
+printf("   - time_taken_3 :  %f \n",  time_taken3); 
+printf("   - time_taken_4 :  %f \n",  time_taken4); 
+printf("   - time_taken_5 :  %f \n",  time_taken5); 
+printf("   - time_taken_6 :  %f \n",  time_taken6); 
+printf("   - time_taken_7 :  %f \n",  time_taken7); 
+printf("   - time_taken_8 :  %f \n",  time_taken8); 
+printf("   - time_taken_9 :  %f \n",  time_taken9); 
+printf("   - time_taken_10 :  %f \n", time_taken10); 
+printf("   - time_taken_11 :  %f \n", time_taken11); 
+*/
+	
 // Update V
    pui = U + ncols * (ncols - 2);
    pvi = V + ncols * (ncols - 1);
    *(pvi + ncols - 1) = 1.0;
    s = superdiagonal[ncols - 1];
    pvi -= ncols;
+	//end4 = clock()-start4; time_taken12=((double)end4)/CLOCKS_PER_SEC;
+	//printf("   - time_taken_12 :  %f \n",time_taken12); start4 = clock();
+
    for (i = ncols - 2, ip1 = ncols - 1; i >= 0; i--, pui -= ncols,
                                                       pvi -= ncols, ip1-- ) {
       if ( s != 0.0 ) {
+		#pragma acc kernels
          pv = pvi + ncols;
+		//#pragma acc parallel loop
          for (j = ip1; j < ncols; j++, pv += ncols)
             *(pv + i) = ( *(pui + j) / *(pui + ip1) ) / s;
-         for (j = ip1; j < ncols; j++) {
+         //#pragma acc parallel loop
+		for (j = ip1; j < ncols; j++) {
             si = 0.0;
             for (k = ip1, pv = pvi + ncols; k < ncols; k++, pv += ncols)
                si += *(pui + k) * *(pv + j);
@@ -324,6 +392,7 @@ static void Householders_Reduction_to_Bidiagonal_Form(double* A, int nrows,
          }
       }
       pv = pvi + ncols;
+
       for ( j = ip1; j < ncols; j++, pv += ncols ) {
          *(pvi + j) = 0.0;
          *(pv + i) = 0.0;
@@ -331,6 +400,8 @@ static void Householders_Reduction_to_Bidiagonal_Form(double* A, int nrows,
       *(pvi + i) = 1.0;
       s = superdiagonal[i];
    }
+	//end4 = clock()-start4; time_taken13=((double)end4)/CLOCKS_PER_SEC; 
+	//printf("   - time_taken_13 :  %f \n",time_taken13); start4 = clock();
 
 // Update U
 
@@ -356,8 +427,10 @@ static void Householders_Reduction_to_Bidiagonal_Form(double* A, int nrows,
          for (j = i, pu = pui; j < nrows; j++, pu += ncols) *(pu + i) = 0.0;
       *(pui + i) += 1.0;
    }
+	//end4 = clock()-start4; time_taken14=((double)end4)/CLOCKS_PER_SEC; 
+	//printf("   - time_taken_14 :  %f \n",time_taken14); start4 = clock();
 }
-
+	
 
 ////////////////////////////////////////////////////////////////////////////////
 // static int Givens_Reduction_to_Diagonal_Form( int nrows, int ncols,        //
