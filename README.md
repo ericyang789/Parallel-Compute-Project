@@ -25,13 +25,35 @@ OpenACC
 Many-core, GPU accelerated computing    
 
 ## Code Profiling and Parallel Implementation
-Explain the code/algorithm    
-Code profiling    
-Decisions taken    
+### t-SNE algorithm
+explain some formulas/sections
+
+### Code profiling    
+ 
+| Function | Time Taken (%) | 
+| --- | --- | 
+| PCA - subtract_col_means  |  0.09%  |
+| PCA - Calculating Covariance Matrix  |  62.21%  |
+| PCA - SVD - HouseHolders Reduction to Bidiagonal Form  |  4.34%  |
+| PCA - SVD - Givens Reduction to Bidiagonal Form  |  1.66%  |
+| PCA - SVD -Sort by Decreasing Singular Values  |  0.008%  |
+| tSNE - calc_D  |  3.69%  |
+| tSNE - calc_perplexity_diff  |  7.91%  |
+| tSNE - calc_perplexity_diff while_loop a  |  0.52%  |
+| tSNE - calc_perplexity_diff while_loop b  |  3.47%  |
+| tSNE - calc_perplexity_diff while_loop c  |  0.018%  |
+| tSNE - calc_sigmas total  |  12.14%  |
+| tSNE - calc_pji  |  1.91%  |
+| tSNE - Update P  |  1.65%  |
+
+### Implementation Decisions
+
+
+### Parallelization with OpenACC
 Pragmas etc    
-![image](./figures/pca_no_tmp2.png)
-![image](./figures/pca_tmp2.png)
-![image](./figures/pca_tmp_acc2.png)
+![image](./figures/pca_no_tmp2.png)    
+![image](./figures/pca_tmp2.png)    
+![image](./figures/pca_tmp_acc2.png)    
 
 
 <img width="631" alt="calc_perplexity" src="https://user-images.githubusercontent.com/44482565/117586589-aabb5780-b14b-11eb-9891-0c55375647b4.png">
@@ -55,6 +77,13 @@ More detailed environment and replicability information can be found in 'replica
 
 ## Performance evaluation
 (speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done.    
+![image](./figures/speedup_pca_vs_N_M.png)  
+
+![image](./figures/speedup_tsne_vs_N_M.png)  
+
+![image](./figures/speedup_total_vs_N_M.png)  
+
+![image](./figures/speedup_total_CvsPython_vs_M.png)
 
 
 ## Discussion and Future Work
