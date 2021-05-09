@@ -29,7 +29,8 @@ Many-core, GPU accelerated computing
 explain some formulas/sections
 
 ### Code profiling    
- 
+We have profiled the execution time of the main sections of our code in order to identify the biggest bottlenecks. With this information we aimed to guide our parallelization efforts in a logical manner, focusing on the code sections that take most of the execution time. The following table shows the percentage of time taken for each of the main sections of the code.
+
 | Function | Time Taken (%) | 
 | --- | --- | 
 | PCA - subtract_col_means  |  0.09%  |
@@ -45,6 +46,8 @@ explain some formulas/sections
 | tSNE - calc_sigmas total  |  12.14%  |
 | tSNE - calc_pji  |  1.91%  |
 | tSNE - Update P  |  1.65%  |
+
+The main observation from the code profiling is that the PCA part take slonger than the
 
 ### Implementation Decisions
 
