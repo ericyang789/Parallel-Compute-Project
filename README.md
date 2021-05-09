@@ -45,9 +45,9 @@ Commands to run
 
   
 AWS Instance type: g3.4xlarge. 
-Refer to lab 5 for OpenACC installation.
-Compile with: pgcc -acc -Minfo trial_tsne.c -o trial_tsne
-Run with: ./trial_tsne
+Refer to lab 5 for OpenACC installation.     
+Compile with: 'pgcc -acc -Minfo trial_tsne.c -o trial_tsne'.     
+Run with: './trial_tsne'.     
 
 
 
