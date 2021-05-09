@@ -6,13 +6,13 @@
 //#include "read_non_binary.h"
 //#include "read_csv.h"
 #include "singular_value_decomposition.c"
-#include "pca_fns2.h"
+#include "pca_fns.h"
 #include "tsne_fns.h"
 
 
 
-#define M 8000
-#define N 784
+#define M 100
+#define N 100
 //#define M 100
 //#define N 21413
 #define K 50
@@ -174,7 +174,7 @@ int main(){
 	printf("Time (PCA): %f \n",time_pca);
 
 	if (print==1) printf("Starting tsne \n");
-	if (print==1) printf("Calc P \n");
+	//if (print==1) printf("Calc P \n");
 	start_tsne = clock();
 	
 	//calc_P(int d1, int k1, double D[][d1], double X[][k1], double sigmas[d1], double pji[][d1], double target_perplexity)
@@ -201,8 +201,10 @@ int main(){
 		// updates gradient
 		KL_dist(M, Y, P, Q, grad);
 		if (print==1){
+	if (grad_iter % 10==0){
 		printf("Iteration: %d \n",grad_iter);
 		}
+}
 	/*	for (int i=0; i<5; i++) {
 			for (int j=0; j<2; j++){
 				printf("%f  ",Y[i][j]);
@@ -239,13 +241,6 @@ int main(){
 
 	}
 	
-/*	for (int i=0; i<5; i++) {
-                        for (int j=0; j<2; j++){
-                                printf("%f  ",Y[i][j]);
-                        }
-
-                }
-	printf("\n"); */
 	if (print==1) printf("Interation's taken: %d \n",grad_iter-1);
 /*	for (int i=0; i<M; i++) {
 		for (int j=0; j<2; j++){
@@ -272,53 +267,5 @@ int main(){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	/* Uncomment to produce the reconstruction Recon and intermediate Vtkt K X N
-	transpose(N, K, Vtk, Vtkt);
-	mat_multiply(M, K, K, N, R, Vtkt, Recon);*/
-
-
-
-	/*FILE *fp;
-	fp=fopen("test", "rb");
-	for(int i=0;i<10;i++) {
-		for(int j=0;j<10;j++) {
-	    		fprintf(fp,"%f ",R[i][j]);
-		}
-		fprintf(fp,"\n");}*/
-
-	/*for(int i=0;i<10;i++) {
-		for(int j=0;j<10;j++) {
-	    		printf("%f ",R[i][j]);
-		}
-		printf("\n");}
-
-	for(int j=0;j<784;j++) {
-	    		printf("%f ",Recon[100][j]);
-		}*/
 	return 0;
 }
