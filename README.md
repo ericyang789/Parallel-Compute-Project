@@ -44,8 +44,8 @@ AWS installation of libraries (Lab 5)
 Commands to run      
 
   
-AWS Instance type: g3.4xlarge. 
-Refer to lab 5 for OpenACC installation.     
+AWS Instance type: g3.4xlarge.     
+Please refer to lab 5 for OpenACC installation instructions.          
 Compile with: 'pgcc -acc -Minfo trial_tsne.c -o trial_tsne'.     
 Run with: './trial_tsne'.     
 
