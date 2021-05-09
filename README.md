@@ -52,9 +52,11 @@ The main observation from the code profiling is that the PCA part takes about 70
 ### Implementation Decisions
 The PCA algorithm was our first target for parallelization for several reasons. The first and most obvious one is that PCA took most of the time. Additionally, if we look in more detail at the PCA profiling, we can see that the single function `Calculating Covariance Matrix` takes 62% of the total computational time. This function consists of a matrix multiplication of our data matrix with its transpose, which promised a big potential for being parallelizable using OpenACC. 
 
+Talking about OpenMP, it did not work
+
 ### Parallelization with OpenACC
 Pragmas etc    
-![image](./figures/pca_no_tmp2.png)    
+![image](./figures/pca_no_tmp2.png)   
 ![image](./figures/pca_tmp2.png)    
 ![image](./figures/pca_tmp_acc2.png)    
 
