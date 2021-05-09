@@ -31,8 +31,8 @@ explain some formulas/sections
 ### Code profiling    
 We have profiled the execution time of the main sections of our code in order to identify the biggest bottlenecks. With this information we aimed to guide our parallelization efforts in a logical manner, focusing on the code sections that take most of the execution time. The following table shows the percentage of time taken for each of the main sections of the code.
 
-| Function | Time Taken (%) | 
-| --- | --- | 
+| Function | Time Taken (%) |
+| --- | --- |
 | PCA - subtract_col_means  |  0.09%  |
 | PCA - Calculating Covariance Matrix  |  62.21%  |
 | PCA - SVD - HouseHolders Reduction to Bidiagonal Form  |  4.34%  |
@@ -65,17 +65,32 @@ Pragmas etc
 <img width="401" alt="calc_Q" src="https://user-images.githubusercontent.com/44482565/117586601-c1fa4500-b14b-11eb-83dd-f7b8d50ae17d.png">
 will add stuff here
 
-## How to run the code
-Python details    
-AWS details    
-AWS installation of libraries (Lab 5)
-Commands to run      
+## Reproducibility
+### Python details    
 
-  
-AWS Instance type: g3.4xlarge.     
+
+
+### AWS instance details    
+
+In order to run the code we employed AWS Instances with GPU of the type: `g3.4xlarge.    
+
+### Installation of software on AWS (Lab 5)
+
+The document Lab5_OpenACC_on_AWS.pdf on folder [AWS_OpenACC_guide)](./AWS_OpenACC_guide/) provides detailed information on how to setup an environment for GPU-accelerated computing using OpenACC on AWS instances.  
+
+### How to run t-SNE    
+
+
 Please refer to lab 5 for OpenACC installation instructions.          
-Compile with: 'pgcc -acc -Minfo tsne.c -o tsne'.     
-Run with: './tsne'.     
+Compile with: 'pgcc -acc -Minfo tsne.c -o tsne'. 
+
+Compile with OpenACC acceleration:
+
+``pgcc -acc -Minfo tsne.c -o tsne``     
+
+Run `compiled code: 
+
+``./tsne``
 
 More detailed environment and replicability information can be found in 'replicability.txt'.     
 
