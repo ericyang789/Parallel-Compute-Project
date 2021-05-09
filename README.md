@@ -15,27 +15,32 @@ The t-SNE algorithm is especially popular in the field of single-cell transcript
 At its core, t-SNE involved a tremendous amount of matrix operations, especially given the size of gene expression matrices (order of hundreds or thousands of cells by tens of thousands of genes). In the PCA component of t-SNE, the numerical complexity of the sequential part grows by O(N squared), where N is the number of genes in our matrix while the parallel part grows by O(N cubed). The remainder of the t-SNE algorithm additionally grows by (X squared), where X is the number of values in our N by M (number of cells) matrix. It is estimated that for a dataset size X of 25,000 data matrix values, a single core t-SNE run can take around 800 minutes [4]. Given gene expression matrices that can contain millions of values, a parallel implementation of t-SNE can significantly reduce computation time. In addition, currently, there is no C implementation of t-SNE that exists. We hypothesize that a successful parallel implementation of t-SNE in C would benefit the dimensionality reduction community, by providing customizable parallelizability in a compiler programming language with a multitude of parallelization infrastructures available. 
 
 ## Previous work
-Python sklearn
-CUDA version (+plot)
+Python sklearn    
+CUDA version (+plot), they only allowed for 2-D, we allow any-D    
 
 ## Platform, Application and Programming Model
-AWS
-OpenACC
-Many-core, GPU accelerated computing
+AWS    
+OpenACC    
+Many-core, GPU accelerated computing    
 
 ## Code Profiling and Parallel Implementation
-Explain the code/algorithm
-Code profiling
-Decisions taken 
-Pragmas etc
+Explain the code/algorithm    
+Code profiling    
+Decisions taken    
+Pragmas etc    
 
 ## How to run the code
+Python details    
+AWS details    
+AWS installation of libraries (Lab 5)
+Commands to run      
+
 
 ## Performance evaluation
-(speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done.
+(speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done.    
 
 ## Discussion and Future Work
-etc
+etc    
 
 
 ## References
