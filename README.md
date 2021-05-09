@@ -49,6 +49,7 @@ Please refer to lab 5 for OpenACC installation instructions.
 Compile with: 'pgcc -acc -Minfo trial_tsne.c -o trial_tsne'.     
 Run with: './trial_tsne'.     
 
+Detailed replicability information can be found in 'replicability.txt'.     
 
 
 ## Performance evaluation
