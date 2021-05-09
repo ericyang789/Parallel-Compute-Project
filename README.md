@@ -33,6 +33,10 @@ Pragmas etc
 ![image](./figures/pca_tmp2.png)
 ![image](./figures/pca_tmp_acc2.png)
 
+
+<img width="631" alt="calc_perplexity" src="https://user-images.githubusercontent.com/44482565/117586589-aabb5780-b14b-11eb-9891-0c55375647b4.png">
+<img width="401" alt="calc_Q" src="https://user-images.githubusercontent.com/44482565/117586601-c1fa4500-b14b-11eb-83dd-f7b8d50ae17d.png">
+
 ## How to run the code
 Python details    
 AWS details    
