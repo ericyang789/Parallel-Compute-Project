@@ -6,7 +6,7 @@
 //#include "read_non_binary.h"
 //#include "read_csv.h"
 #include "singular_value_decomposition.c"
-#include "pca_fns.h"
+#include "pca_fns2.h"
 #include "tsne_fns.h"
 
 
@@ -53,9 +53,11 @@ int grad_iter=0;
 
 // Initialise A - need to take away mean and calculate the covariance matrix
 int main(){
-	clock_t start1, end1, start2, end2, start_pca, end_pca, start_tsne, end_tsne, end_total;
-	double time1, time2, time_pca, time_tsne, total_time;
-	int print=0;
+//	clock_t start1, end1, start2, end2, start_pca, end_pca, start_tsne, end_tsne, end_total;
+//	double time1, time2, time_pca, time_tsne, total_time;
+	clock_t start_pca,end_pca,start_tsne,end_tsne,end_total;
+	double time_pca,time_tsne,total_time;
+	int print=1;
 
 	printf("M: %d\n", M);
 	printf("N: %d\n", N);
@@ -81,10 +83,10 @@ int main(){
 	start_pca = clock();
 	
 	// Mean vector of size N - collects sum of each of N columns of test_image
-	start1 = clock();
+//	start1 = clock();
 	subtract_col_means(M, N, data);	
-	end1 = clock()-start1; time1=((double)end1)/CLOCKS_PER_SEC; start1 = clock();
-	printf("Time (PCA - subtract_col_means): %f \n",time1);
+//	end1 = clock()-start1; time1=((double)end1)/CLOCKS_PER_SEC; start1 = clock();
+//	printf("Time (PCA - subtract_col_means): %f \n",time1);
 
 	if (print==1) printf(" Calculating covariance matrix \n");
 
@@ -100,8 +102,8 @@ int main(){
 		}
 
 	calculate_covariance(M, N, data, At, S);
-	end1 = clock()-start1; time1=((double)end1)/CLOCKS_PER_SEC; start1 = clock();
-	printf("Time (PCA - Calculating Covariance Matrix): %f \n",time1);
+//	end1 = clock()-start1; time1=((double)end1)/CLOCKS_PER_SEC; start1 = clock();
+//	printf("Time (PCA - Calculating Covariance Matrix): %f \n",time1);
 
 
 	//multiply(N, M, M , N, At, A, S);
@@ -115,7 +117,7 @@ int main(){
 
 	free(dummy_array);
 
-	if (print==1){
+/*	if (print==1){
 		printf(" Finished SVD \n");
 
 		if (err < 0) printf(" Failed to converge\n");
@@ -126,7 +128,7 @@ int main(){
 			printf("%1.1f ", singular_values[i]);
 			printf("\n");
 		}
-	}
+	} */
 
 
 
@@ -176,18 +178,18 @@ int main(){
 	start_tsne = clock();
 	
 	//calc_P(int d1, int k1, double D[][d1], double X[][k1], double sigmas[d1], double pji[][d1], double target_perplexity)
-	start1 = clock();
+//	start1 = clock();
 	calc_P(M, K, D, X, sigmas, pji, target_perplexity, P);
-	end1 = clock()-start1; time1=((double)end1)/CLOCKS_PER_SEC; start1 = clock();
-	printf("Time (tSNE - calc_P): %f \n",time1);
+//	end1 = clock()-start1; time1=((double)end1)/CLOCKS_PER_SEC; start1 = clock();
+//	printf("Time (tSNE - calc_P): %f \n",time1);
 
 	for (int i=0; i<M; i++) {
 		for (int j=0; j<2; j++){
 			Y[i][j]=normalRandom()*0.0001;
 		}
 	}
-	end1 = clock()-start1; time1=((double)end1)/CLOCKS_PER_SEC; start1 = clock();
-	printf("Time (tSNE - after calc_P): %f \n",time1);
+//	end1 = clock()-start1; time1=((double)end1)/CLOCKS_PER_SEC; start1 = clock();
+//	printf("Time (tSNE - after calc_P): %f \n",time1);
 
 
 	// Gradient descent
@@ -200,23 +202,23 @@ int main(){
 		KL_dist(M, Y, P, Q, grad);
 		if (print==1){
 		printf("Iteration: %d \n",grad_iter);
-
-		for (int i=0; i<5; i++) {
+		}
+	/*	for (int i=0; i<5; i++) {
 			for (int j=0; j<2; j++){
 				printf("%f  ",Y[i][j]);
 			}
 
 		}
 
-		printf("\n");
+		printf("\n");*/ 
 
-		for (int i=0; i<5; i++) {
+	/*	for (int i=0; i<5; i++) {
 			for (int j=0; j<2; j++){
 				printf("%f  ",grad[i][j]);
 			}
 		}
-		printf("\n");
-		}
+		printf("\n");  */
+		
 
 		//Ynew=Y-alpha*grad;
 		for (int i=0; i<M; i++) {
@@ -231,23 +233,28 @@ int main(){
 
 			}
 		}
-		end1 = clock()-start1; time1=((double)end1)/CLOCKS_PER_SEC; start1 = clock();
+//		end1 = clock()-start1; time1=((double)end1)/CLOCKS_PER_SEC; start1 = clock();
 		//printf("Time (tSNE - grad_descent, iter %d): %f \n",grad_iter,time1);
 		grad_iter+=1;
 
 	}
 	
+/*	for (int i=0; i<5; i++) {
+                        for (int j=0; j<2; j++){
+                                printf("%f  ",Y[i][j]);
+                        }
 
+                }
+	printf("\n"); */
 	if (print==1) printf("Interation's taken: %d \n",grad_iter-1);
-/*
-	for (int i=0; i<M; i++) {
+/*	for (int i=0; i<M; i++) {
 		for (int j=0; j<2; j++){
 			printf("%f",Y[i][j]);
 		}
 		printf("\n");
 	}
-*/
 
+*/
 	end_tsne = clock()-start_tsne;
 	time_tsne=((double)end_tsne)/CLOCKS_PER_SEC;
 	printf("Time (TSNE): %f \n",time_tsne);
@@ -256,11 +263,11 @@ int main(){
 	total_time=((double)end_total)/CLOCKS_PER_SEC;
 	printf("Time Total (PCA + TSNE): %f \n",total_time);
 
-	printf(" The first 20 singular values of A are \n");
+/*	printf(" The first 20 singular values of A are \n");
 	for (int i = 0; i<1; i++){
 		printf("%1.1f ", singular_values[i]);
 		printf("\n");
-	}
+	}*/
 
 
 

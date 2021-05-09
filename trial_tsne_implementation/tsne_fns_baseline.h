@@ -52,11 +52,11 @@ float calc_perplexity_diff(double sigmai, double target_perplexity, int d1, doub
 
 	denom=2*pow(sigmai,2);
 	
-	#pragma acc parallel vector_length(32) loop reduction(+:Z)
+	//#pragma acc parallel vector_length(32) loop reduction(+:Z)
 	for (int i=0; i<d1; i++){
 		Z+=exp(-pow(Di[i],2)/denom);
 	}
-	#pragma acc parallel
+	//#pragma acc parallel
 	for (int j=0; j<d1; j++){
 		pji_var=exp(-pow(Di[j],2)/denom)/Z;
 		if (pji_var>0) {
@@ -204,10 +204,10 @@ void calc_Q(int d1, double Y[][2], double Q[][d1]){
 	//Q MXM init to 0's and is updated
 	double Z=0.0;
 	double norm=0.0;
-	#pragma acc parallel
-	#pragma acc data copyin(Y[:d1][:]) copyout(Q[:d1][:])
+	//#pragma acc parallel
+	//#pragma acc data copyin(Y[:d1][:]) copyout(Q[:d1][:])
 	for (int i=0; i<d1; i++) {
-		#pragma acc loop reduction(+:Z)
+		//#pragma acc loop reduction(+:Z)
 		for (int j=0; j<i; j++) {
 			norm=0.0;
 			for (int k=0; k<2; k++){
