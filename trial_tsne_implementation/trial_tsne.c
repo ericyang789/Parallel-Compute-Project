@@ -195,7 +195,7 @@ int main(){
 	// update Y using learning rate alpha and absoluted difference for convergence
 
 	if (print==1) printf("Starting gradient descent \n");
-	while (grad_err>0.1 && grad_iter<4){
+	while (grad_err>0.1 && grad_iter<50){
 		// updates gradient
 		KL_dist(M, Y, P, Q, grad);
 		if (print==1){

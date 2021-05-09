@@ -200,32 +200,26 @@ void calc_P(int d1, int k1, double D[][d1], double X[][k1], double sigmas[d1], d
 
 
 void calc_Q(int d1, double Y[][2], double Q[][d1]){
-	//Y Mx2 initialised to 0's (TODO: change to random init)
-	//Q MXM init to 0's and is updated
 	double Z=0.0;
 	double norm=0.0;
-
+	#pragma acc parallel
+	#pragma acc data copyin(Y[:d1][:]) copyout(Q[:d1][:])
 	for (int i=0; i<d1; i++) {
+		#pragma acc loop reduction(+:Z)
 		for (int j=0; j<i; j++) {
 			norm=0.0;
 			for (int k=0; k<2; k++){
 				norm+=pow(Y[i][k]-Y[j][k],2);}
 			Q[i][j]=1.0/(1.0+norm);
-//PAUL			if (i<3 && j<2){printf("In calc_Q Qij: %f \n", Q[i][j]);}
 			Q[j][i]=Q[i][j];
 			Z+=2*Q[i][j];
 		}
 		}
-//PAUL	printf("Z: %f \n", Z);
 	for (int i=0; i<d1; i++) {
 		for (int j=0; j<d1; j++) {
 			Q[i][j]=Q[i][j]/Z;
-
 		}
 	}
-
-
-
 }
 
 
@@ -248,14 +242,11 @@ void KL_dist(int d1, double Y[][2], double P[][d1], double Q[][d1], double grad[
 		}
 	}
 
-
 	for (int i=0; i<d1; i++) {
 		for (int j=0; j<d1; j++) {
 			norm=0;
-
 			for (int kk=0; kk<2; kk++){
 				norm+=pow(Y[i][kk]-Y[j][kk],2);}
-
 
 			for (int k=0; k<2; k++){
 				grad[i][k]+=(P[i][j]-Q[i][j])*(Y[i][k]-Y[j][k])*(1.0/(1.0+norm));}
