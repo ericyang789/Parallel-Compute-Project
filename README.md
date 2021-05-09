@@ -14,6 +14,30 @@ The t-SNE algorithm is especially popular in the field of single-cell transcript
 ## C Implementation of t-SNE and the Need for Big Compute:
 At its core, t-SNE involved a tremendous amount of matrix operations, especially given the size of gene expression matrices (order of hundreds or thousands of cells by tens of thousands of genes). In the PCA component of t-SNE, the numerical complexity of the sequential part grows by O(N squared), where N is the number of genes in our matrix while the parallel part grows by O(N cubed). The remainder of the t-SNE algorithm additionally grows by (X squared), where X is the number of values in our N by M (number of cells) matrix. It is estimated that for a dataset size X of 25,000 data matrix values, a single core t-SNE run can take around 800 minutes [4]. Given gene expression matrices that can contain millions of values, a parallel implementation of t-SNE can significantly reduce computation time. In addition, currently, there is no C implementation of t-SNE that exists. We hypothesize that a successful parallel implementation of t-SNE in C would benefit the dimensionality reduction community, by providing customizable parallelizability in a compiler programming language with a multitude of parallelization infrastructures available. 
 
+## Previous work
+Python sklearn
+CUDA version (+plot)
+
+## Platform, Application and Programming Model
+AWS
+OpenACC
+Many-core, GPU accelerated computing
+
+## Code Profiling and Parallel Implementation
+Explain the code/algorithm
+Code profiling
+Decisions taken 
+Pragmas etc
+
+## How to run the code
+
+## Performance evaluation
+(speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done.
+
+## Discussion and Future Work
+etc
+
+
 ## References
 1.	Van der Maaten, L., & Hinton, G. (2008). Visualizing data using t-SNE. Journal of machine learning research, 9(11).
 2.	Kobak, D., & Berens, P. (2019). The art of using t-SNE for single-cell transcriptomics. Nature communications, 10(1), 5416. https://doi.org/10.1038/s41467-019-13056-x
