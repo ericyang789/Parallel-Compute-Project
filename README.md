@@ -39,43 +39,43 @@ AWS details
 AWS installation of libraries (Lab 5)
 Commands to run      
 
-Replicability Information: 
-Instance type: g3.4xlarge
+Replicability Information:     
+Instance type: g3.4xlarge.   
 
-CUDA Driver Version:           11030
-NVRM version:                  NVIDIA UNIX x86_64 Kernel Module  465.19.01  Fri Mar 19 07:44:41 UTC 2021
+CUDA Driver Version:           11030.       
+NVRM version:                  NVIDIA UNIX x86_64 Kernel Module  465.19.01  Fri Mar 19 07:44:41 UTC 2021.   
 
-Device Number:                 0
-Device Name:                   NVIDIA Tesla M60
-Device Revision Number:        5.2
-Global Memory Size:            7988903936
-Number of Multiprocessors:     16
-Concurrent Copy and Execution: Yes
-Total Constant Memory:         65536
-Total Shared Memory per Block: 49152
-Registers per Block:           65536
-Warp Size:                     32
-Maximum Threads per Block:     1024
-Maximum Block Dimensions:      1024, 1024, 64
-Maximum Grid Dimensions:       2147483647 x 65535 x 65535
-Maximum Memory Pitch:          2147483647B
-Texture Alignment:             512B
-Clock Rate:                    873 MHz
-Execution Timeout:             No
-Integrated Device:             No
-Can Map Host Memory:           Yes
+Device Number:                 0.  
+Device Name:                   NVIDIA Tesla M60.  
+Device Revision Number:        5.2.  
+Global Memory Size:            7988903936.     
+Number of Multiprocessors:     16.    
+Concurrent Copy and Execution: Yes.       
+Total Constant Memory:         65536.       
+Total Shared Memory per Block: 49152.       
+Registers per Block:           65536.      
+Warp Size:                     32.      
+Maximum Threads per Block:     1024.     
+Maximum Block Dimensions:      1024, 1024, 64.      
+Maximum Grid Dimensions:       2147483647 x 65535 x 65535.     
+Maximum Memory Pitch:          2147483647B.       
+Texture Alignment:             512B. 
+Clock Rate:                    873 MHz.       
+Execution Timeout:             No.       
+Integrated Device:             No.      
+Can Map Host Memory:           Yes.      
 Compute Mode:                  default
-Concurrent Kernels:            Yes
-ECC Enabled:                   Yes
-Memory Clock Rate:             2505 MHz
-Memory Bus Width:              256 bits
-L2 Cache Size:                 2097152 bytes
-Max Threads Per SMP:           2048
-Async Engines:                 2
-Unified Addressing:            Yes
-Managed Memory:                Yes
-Concurrent Managed Memory:     No
-Default Target:                cc50
+Concurrent Kernels:            Yes. 
+ECC Enabled:                   Yes. 
+Memory Clock Rate:             2505 MHz.       
+Memory Bus Width:              256 bits.      
+L2 Cache Size:                 2097152 bytes.     
+Max Threads Per SMP:           2048.      
+Async Engines:                 2.      
+Unified Addressing:            Yes.     
+Managed Memory:                Yes.     
+Concurrent Managed Memory:     No.      
+Default Target:                cc50.    
 
 
 ## Performance evaluation
