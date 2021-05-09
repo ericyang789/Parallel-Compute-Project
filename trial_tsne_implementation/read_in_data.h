@@ -8,8 +8,8 @@
 #define DATA "../data/t10k-images.idx3-ubyte"
 #define DATA_LABEL "../data/t10k-labels.idx1-ubyte"
 
+#define Ms 4000 //NUM_TEST
 #define Ns 784 // 28*28
-#define Ms 2500 //NUM_TEST
 #define LEN_INFO_IMAGE 4
 #define LEN_INFO_LABEL 2
 

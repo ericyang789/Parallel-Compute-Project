@@ -2,6 +2,8 @@
 #include <stdlib.h>
 
 // Matrix multiplication
+int print=0;
+
 void mat_multiply(int r1, int c1, int r2, int c2,
 		     double a[r1][c1],
                       double b[r2][c2],
@@ -13,14 +15,18 @@ void mat_multiply(int r1, int c1, int r2, int c2,
       for (int j = 0; j < c2; ++j) {
          c[i][j] = 0;
       }
-   }
-
+   }	
+	
    // Multiplying first and second matrices and storing it in c
+   //#pragma acc kernels copyin(a,b) copy(c)
+   #pragma omp parallel for default(none) shared(a,b,c) private(i,j,k)
    for (int i = 0; i < r1; ++i) {
       for (int j = 0; j < c2; ++j) {
+		float tmp = 0;
          for (int k = 0; k < c1; ++k) {
-            c[i][j] += a[i][k] * b[k][j];
+            tmp += a[i][k] * b[k][j];
          }
+		c[i][j] = tmp;
       }
    }
 }
@@ -76,7 +82,7 @@ void subtract_col_means(int d1, int d2, double data[][d2]){
 
 	}
 
-	printf(" Calculating means \n");
+	if (print==1) printf(" Calculating means \n");
 	for (int i=0; i<d2; i++) {
 		for (int j=0; j<d1; j++) {
 			col_mean[i]=col_mean[i]+data[j][i];
@@ -85,7 +91,7 @@ void subtract_col_means(int d1, int d2, double data[][d2]){
 		col_mean[i]=col_mean[i]/d1;
 	}
 
-	printf(" Taking away means \n");
+	if (print==1) printf(" Taking away means \n");
 	// Taking mean away from data test_image
 	for (int i=0; i<d1; i++) {
 		for (int j=0; j<d2; j++) {
@@ -101,25 +107,69 @@ void calculate_covariance(int d1, int d2, double data[][d2], double data_transpo
 	// Calculating the covariance matrix S= np.dot(A.T, A)/M
 
 
-	printf(" Calculating covariance matrix: getting A.T \n");
+	if (print==1) printf(" Calculating covariance matrix: getting A.T \n");
 	// Get A.T
 
+	for (int i = 0; i < d1; i++)
+		for (int j = 0; j < d2; j++)
+			data_transpose[i][j] = data[j][i];
 
-  for (int i = 0; i < d1; i++)
-      for (int j = 0; j < d2; j++)
-          data_transpose[i][j] = data[j][i];
-
-
-	printf(" Calculating covariance matrix: getting A.T * A \n");
+	
+	if (print==1) printf(" Calculating covariance matrix: getting A.T * A \n");
 	// Calculate S
 	//mat_multiply(N, M, M, N, At, A, S);
-
+	
+/*12.23
+	#pragma acc data copyin(data_transpose[0:d2][0:d1], data[0:d1][0:d2]) copy(cov[0:d2][0:d2]) 
+	#pragma acc kernels
+	#pragma acc loop tile(64,64)
 	for (int i = 0; i < d2; ++i) {
-		 for (int j = 0; j < d2; ++j) {
-				for (int k = 0; k < d1; ++k) {
-					 cov[i][j] += data_transpose[i][k] * data[k][j];
-				}
-		 }
+		for (int j = 0; j < d2; ++j) {
+			double tmp = 0;
+	#pragma acc loop reduction(+:tmp)
+			for (int k = 0; k < d1; ++k) {
+				//cov[i][j] += data_transpose[i][k] * data[k][j];
+				tmp += data_transpose[i][k] * data[k][j];
+			}
+		cov[i][j] = tmp;
+		}
 	}
+*/	
+
+/*
+	#pragma acc data copyin(data_transpose[0:d2][0:d1], data[0:d1][0:d2]) copy(cov[0:d2][0:d2])
+	#pragma acc kernels
+	#pragma acc loop tile(4,4)
+	for (int i = 0; i < d2; ++i) {
+		for (int j = 0; j < d2; ++j) {
+			double tmp = 0;
+	#pragma acc loop reduction(+:tmp)
+			for (int k = 0; k < d1; ++k) {
+				//cov[i][j] += data_transpose[i][k] * data[k][j];
+				tmp += data_transpose[i][k] * data[k][j];
+			}
+		cov[i][j] = tmp;
+		}
+	}
+*/
+
+
+	#pragma acc kernels copyin(data_transpose[0:d2][0:d1], data[0:d1][0:d2]) copy(cov[0:d2][0:d2])
+	//#pragma acc kernels
+	#pragma acc loop independent vector(32)
+	for (int i = 0; i < d2; ++i) {
+	#pragma acc loop independent
+		for (int j = 0; j < d2; ++j) {
+			double tmp = 0;
+	#pragma acc loop reduction(+:tmp)
+			for (int k = 0; k < d1; ++k) {
+				tmp += data_transpose[i][k] * data[k][j];
+			}
+		cov[i][j] = tmp;
+		}
+	}
+	if (print==1) printf("d1,d2 = %d, %d", d1, d2);
+
+
 
 }

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 void calc_pji(int d1, double pji[][d1], double D[][d1], double sigmas[d1]){
+	//#pragma acc kernels copyin(D[0:d1][0:d1], sigmas[0:d1]) copy(cov[0:d1][0:d2])
 	// d1=M, pji is MXM, D is MXM, sigmas is M
 	double Z=0;
 	for (int i=0; i<d1; i++) {
@@ -50,11 +51,13 @@ float calc_perplexity_diff(double sigmai, double target_perplexity, int d1, doub
 	double diff=0;
 
 	denom=2*pow(sigmai,2);
-
+	
+	#pragma acc kernels
+	#pragma acc loop independent
 	for (int i=0; i<d1; i++){
 		Z+=exp(-pow(Di[i],2)/denom);
 	}
-
+	#pragma acc loop independent
 	for (int j=0; j<d1; j++){
 		pji_var=exp(-pow(Di[j],2)/denom)/Z;
 		if (pji_var>0) {
@@ -85,6 +88,11 @@ void calc_sigmas(int d1, double D[][d1], double sigmas[d1], double target_perple
 	double c;
 	double cnew;
 
+	clock_t start4, end4;
+	double time_taken_pd=0;
+	double time_taken_wa=0;
+	double time_taken_wb=0;
+	double time_taken_wc=0;
 
 	for (int i=0; i<d1; i++){
 		a=1.0;b=1.0;
@@ -92,20 +100,27 @@ void calc_sigmas(int d1, double D[][d1], double sigmas[d1], double target_perple
 		for (int k=0; k<d1; k++){
 			Di[k]=D[i][k];
 		}
-
+		
 		//calc_perplexity_diff(double sigmai, double target_perplexity, int d1, double Di[d1])
+		start4 = clock();
 		diff_a=calc_perplexity_diff(a, target_perplexity, d1, Di);
 		diff_b=calc_perplexity_diff(b, target_perplexity, d1, Di);
-
+		end4 = clock()-start4; time_taken_pd+=((double)end4)/CLOCKS_PER_SEC; start4 = clock();
+		
+		//int n_iters_wa = 0;
 		while (diff_a>=0){
 			a=a/2;
 			diff_a=calc_perplexity_diff(a, target_perplexity, d1, Di);
+			//n_iters_wa += 1;
 		}
+		end4 = clock()-start4; time_taken_wa+=((double)end4)/CLOCKS_PER_SEC; start4 = clock();
+		//printf("n_iters_wa = %d,   time = %f\n", n_iters_wa, ((double)end4)/CLOCKS_PER_SEC);
 
 		while (diff_b<=0){
 			b=b*2;
 			diff_b=calc_perplexity_diff(b, target_perplexity, d1, Di);
 		}
+		end4 = clock()-start4; time_taken_wb+=((double)end4)/CLOCKS_PER_SEC; start4 = clock();
 
 		c=(a+b)/2;
 
@@ -122,9 +137,17 @@ void calc_sigmas(int d1, double D[][d1], double sigmas[d1], double target_perple
 			iter+=1;
 
 		}
+		end4 = clock()-start4; time_taken_wc+=((double)end4)/CLOCKS_PER_SEC; start4 = clock();
+
+
 
 		sigmas[i]=c;
 	}
+	printf("Time (tSNE- calc_P - calc_sigmas - calc_perplexity_diff): %f \n", time_taken_pd);
+	printf("Time (tSNE- calc_P - calc_sigmas - calc_perplexity_diff while_loop a): %f \n", time_taken_wa);
+	printf("Time (tSNE- calc_P - calc_sigmas - calc_perplexity_diff while_loop b): %f \n", time_taken_wb);
+	printf("Time (tSNE- calc_P - calc_sigmas - calc_perplexity_diff while_loop c): %f \n", time_taken_wc);
+
 
 
 }
@@ -132,6 +155,11 @@ void calc_sigmas(int d1, double D[][d1], double sigmas[d1], double target_perple
 
 
 void calc_P(int d1, int k1, double D[][d1], double X[][k1], double sigmas[d1], double pji[][d1], double target_perplexity, double P[][d1]){
+	clock_t start3, end3;
+	double time_taken;
+	start3 = clock();
+	
+
 	// Calculate P which is input as all zeros
 
 	// X is M X K
@@ -139,14 +167,22 @@ void calc_P(int d1, int k1, double D[][d1], double X[][k1], double sigmas[d1], d
 
 	// Updates D
 	calc_D(d1, k1, X, D);
+	end3 = clock()-start3; time_taken=((double)end3)/CLOCKS_PER_SEC; start3 = clock();
+	printf("Time (tSNE- calc_P - calc_D): %f \n",time_taken);
 
 	// sigmas is size M and should all be set to 0
 	// Updates sigmas
 
 	calc_sigmas(d1, D, sigmas, target_perplexity);
+	end3 = clock()-start3;	time_taken=((double)end3)/CLOCKS_PER_SEC; start3 = clock();
+	printf("Time (tSNE- calc_P - calc_sigmas): %f \n",time_taken);
+
 
 	// Update pji - M X M - initialised to 0's
 	calc_pji(d1, pji, D, sigmas);
+	end3 = clock()-start3;	time_taken=((double)end3)/CLOCKS_PER_SEC; start3 = clock();
+	printf("Time (tSNE- calc_P - calc_pji): %f \n",time_taken);
+
 
 	// Update P - M X M - initialised to 0's
 
@@ -154,6 +190,10 @@ void calc_P(int d1, int k1, double D[][d1], double X[][k1], double sigmas[d1], d
 		for (int j=0; j<d1; j++) {
 			P[i][j]=(pji[i][j]+pji[j][i])/(2*d1);}
 		}
+	end3 = clock()-start3;	time_taken=((double)end3)/CLOCKS_PER_SEC; start3 = clock();
+	printf("Time (tSNE- calc_P - Update P): %f \n",time_taken);
+
+
 
 
 
@@ -172,12 +212,12 @@ void calc_Q(int d1, double Y[][2], double Q[][d1]){
 			for (int k=0; k<2; k++){
 				norm+=pow(Y[i][k]-Y[j][k],2);}
 			Q[i][j]=1.0/(1.0+norm);
-			if (i<3 && j<2){printf("In calc_Q Qij: %f \n", Q[i][j]);}
+//PAUL			if (i<3 && j<2){printf("In calc_Q Qij: %f \n", Q[i][j]);}
 			Q[j][i]=Q[i][j];
 			Z+=2*Q[i][j];
 		}
 		}
-	printf("Z: %f \n", Z);
+//PAUL	printf("Z: %f \n", Z);
 	for (int i=0; i<d1; i++) {
 		for (int j=0; j<d1; j++) {
 			Q[i][j]=Q[i][j]/Z;
@@ -221,7 +261,7 @@ void KL_dist(int d1, double Y[][2], double P[][d1], double Q[][d1], double grad[
 			for (int k=0; k<2; k++){
 				grad[i][k]+=(P[i][j]-Q[i][j])*(Y[i][k]-Y[j][k])*(1.0/(1.0+norm));}
 
-			if (i<3 && j<2){printf("Pij: %f \n",P[i][j]);printf("Qij: %f \n",Q[i][j]);}
+//PAUL			if (i<3 && j<2){printf("Pij: %f \n",P[i][j]);printf("Qij: %f \n",Q[i][j]);}
 
 			} // end of j loop
 

@@ -10,10 +10,10 @@
 
 
 
-//#define M 100
-#define M 2500
-//#define N 21413
+#define M 4000
 #define N 784
+//#define M 100
+//#define N 21413
 #define K 50
 double A[M][N];
 double Recon[M][N];
@@ -52,13 +52,19 @@ int grad_iter=0;
 
 // Initialise A - need to take away mean and calculate the covariance matrix
 int main(){
-	clock_t start, end;
+	clock_t start1, end1, start2, end2, start_pca, end_pca, start_tsne, end_tsne, end_total;
+	double time1, time2, time_pca, time_tsne, total_time;
+	int print=0;
 
-	printf(" Starting to load data \n");
+	printf("M: %d\n", M);
+	printf("N: %d\n", N);
+	
+	if (print==1) printf(" Starting to load data \n");
 
 	load_data();
 
 	
+/*
 	printf(" Printing the data \n");
 
 	for (int i=0; i<M; i++) {
@@ -66,22 +72,20 @@ int main(){
 			printf("%f  ",data[i][j]);
 		}
 		printf("\n");
-
 	}
+*/	
 
+	if (print==1) printf(" Finished loading data \n");
 
-
-	printf(" Finished loading data \n");
-
+	start_pca = clock();
+	
 	// Mean vector of size N - collects sum of each of N columns of test_image
+	start1 = clock();
+	subtract_col_means(M, N, data);	
+	end1 = clock()-start1; time1=((double)end1)/CLOCKS_PER_SEC; start1 = clock();
+	printf("Time (PCA - subtract_col_means): %f \n",time1);
 
-
-	start = clock();
-
-	subtract_col_means(M, N, data);
-
-
-	printf(" Calculating covariance matrix \n");
+	if (print==1) printf(" Calculating covariance matrix \n");
 
 	// Calculating the covariance matrix S= np.dot(A.T, A)/M
 	for (int i=0; i<N; i++) {
@@ -94,22 +98,14 @@ int main(){
 			At[i][j]=0;}
 		}
 
-	//printf(" Calculating covariance matrix: getting A.T \n");
-	// Get A.T
-	//transpose(M, N, A, At);
-
-	//printf(" Calculating covariance matrix: getting A.T * A \n");
-	// Calculate S
-	//mat_multiply(N, M, M, N, At, A, S);
-
-
-
 	calculate_covariance(M, N, data, At, S);
+	end1 = clock()-start1; time1=((double)end1)/CLOCKS_PER_SEC; start1 = clock();
+	printf("Time (PCA - Calculating Covariance Matrix): %f \n",time1);
 
 
 	//multiply(N, M, M , N, At, A, S);
 
-	printf(" Starting SVD \n");
+	if (print==1) printf(" Starting SVD \n");
 	dummy_array = (double*) malloc(N * sizeof(double));
 	if (dummy_array == NULL) {printf(" No memory available\n"); exit(0); }
 
@@ -118,44 +114,36 @@ int main(){
 
 	free(dummy_array);
 
-	printf(" Finished SVD \n");
+	if (print==1){
+		printf(" Finished SVD \n");
 
-	if (err < 0) printf(" Failed to converge\n");
-		else { printf(" The first 20 singular values of A are \n");   }
+		if (err < 0) printf(" Failed to converge\n");
+			else { printf(" The first 20 singular values of A are \n");   }
 
-
-	for (int i = 0; i<20; i++){
-	               printf("%1.1f ", singular_values[i]);
-		       printf("\n");
-
+	
+		for (int i = 0; i<20; i++){
+			printf("%1.1f ", singular_values[i]);
+			printf("\n");
+		}
 	}
 
 
 
 
 	// Want first k singular values and first k columns of V
-
 	// Reduced V = N X N to K cols with N rows in Vtk Vtk = N X K
-
-	printf(" Calculating first K columns of V \n");
+	if (print==1)  printf(" Calculating first K columns of V \n");
 
 	reduce_to_k(K, N, V, Vtk);
 
 	// Want to project A onto K dims ie. R=A*V.T[:,0:k] R = M X K
-
-	printf(" Projecting onto K dims of V \n");
+	if (print==1)  printf(" Projecting onto K dims of V \n");
 
 	//mat_multiply(M, N, N, K, A, Vtk, R);
 	multiply(M, N, N, K, data, Vtk, X);
-	printf(" Done \n");
-
-	end = clock()-start;
-
-	double time_taken=((double)end)/CLOCKS_PER_SEC;
-	printf("Time taken: %f \n",time_taken);
+	if (print==1)  printf(" Done \n");
 
 	// Working with MxD matrix R
-
 	// pji
 
 	for (int i=0; i<M; i++) {
@@ -178,31 +166,39 @@ int main(){
 		}
 	}
 
-	printf("Starting tsne \n");
+	end_pca = clock()-start_pca;
+	time_pca=((double)end_pca)/CLOCKS_PER_SEC;
+	printf("Time (PCA): %f \n",time_pca);
 
-	printf("Calc P \n");
-
-
+	if (print==1) printf("Starting tsne \n");
+	if (print==1) printf("Calc P \n");
+	start_tsne = clock();
+	
 	//calc_P(int d1, int k1, double D[][d1], double X[][k1], double sigmas[d1], double pji[][d1], double target_perplexity)
+	start1 = clock();
 	calc_P(M, K, D, X, sigmas, pji, target_perplexity, P);
+	end1 = clock()-start1; time1=((double)end1)/CLOCKS_PER_SEC; start1 = clock();
+	printf("Time (tSNE - calc_P): %f \n",time1);
 
 	for (int i=0; i<M; i++) {
 		for (int j=0; j<2; j++){
 			Y[i][j]=normalRandom()*0.0001;
 		}
 	}
+	end1 = clock()-start1; time1=((double)end1)/CLOCKS_PER_SEC; start1 = clock();
+	printf("Time (tSNE - after calc_P): %f \n",time1);
+
 
 	// Gradient descent
-
 	//KL_dist(int d1, double Y[][2], double P[][d1], double Q[][d1], double grad[][2])
-
 	// update Y using learning rate alpha and absoluted difference for convergence
 
-	printf("Starting gradient descent \n");
+	if (print==1) printf("Starting gradient descent \n");
 	while (grad_err>0.1 && grad_iter<4){
 		// updates gradient
 		KL_dist(M, Y, P, Q, grad);
-		printf("Interation: %d \n",grad_iter);
+		if (print==1){
+		printf("Iteration: %d \n",grad_iter);
 
 		for (int i=0; i<5; i++) {
 			for (int j=0; j<2; j++){
@@ -217,11 +213,9 @@ int main(){
 			for (int j=0; j<2; j++){
 				printf("%f  ",grad[i][j]);
 			}
-
 		}
-
 		printf("\n");
-
+		}
 
 		//Ynew=Y-alpha*grad;
 		for (int i=0; i<M; i++) {
@@ -236,11 +230,14 @@ int main(){
 
 			}
 		}
+		end1 = clock()-start1; time1=((double)end1)/CLOCKS_PER_SEC; start1 = clock();
+		printf("Time (tSNE - grad_descent, iter %d): %f \n",grad_iter,time1);
 		grad_iter+=1;
 
 	}
+	
 
-	printf("Interation's taken: %d \n",grad_iter-1);
+	if (print==1) printf("Interation's taken: %d \n",grad_iter-1);
 /*
 	for (int i=0; i<M; i++) {
 		for (int j=0; j<2; j++){
@@ -250,10 +247,19 @@ int main(){
 	}
 */
 
-	end = clock()-start;
-	time_taken=((double)end)/CLOCKS_PER_SEC;
-	printf("Time taken: %f \n",time_taken);
+	end_tsne = clock()-start_tsne;
+	time_tsne=((double)end_tsne)/CLOCKS_PER_SEC;
+	printf("Time (TSNE): %f \n",time_tsne);
 
+	end_total = clock()-start_pca;
+	total_time=((double)end_total)/CLOCKS_PER_SEC;
+	printf("Time Total (PCA + TSNE): %f \n",total_time);
+
+	printf(" The first 20 singular values of A are \n");
+	for (int i = 0; i<1; i++){
+		printf("%1.1f ", singular_values[i]);
+		printf("\n");
+	}
 
 
 
