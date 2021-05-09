@@ -47,10 +47,10 @@ We have profiled the execution time of the main sections of our code in order to
 | tSNE - calc_pji  |  1.91%  |
 | tSNE - Update P  |  1.65%  |
 
-The main observation from the code profiling is that the PCA part take slonger than the
+The main observation from the code profiling is that the PCA part takes about 70% of the time, much longer than the core t-SNE algorithm which only accounts for approximately 30% of the time. 
 
 ### Implementation Decisions
-
+The PCA algorithm was our first target for parallelization for several reasons. The first and most obvious one is that PCA took most of the time. Additionally, if we look in more detail at the PCA profiling, we can see that the single function `Calculating Covariance Matrix` takes 62% of the total computational time. This function consists of a matrix multiplication of our data matrix with its transpose, which promised a big potential for being parallelizable using OpenACC. 
 
 ### Parallelization with OpenACC
 Pragmas etc    
