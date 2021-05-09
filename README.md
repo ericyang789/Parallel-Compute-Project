@@ -17,6 +17,7 @@ At its core, t-SNE involved a tremendous amount of matrix operations, especially
 ## Previous work
 Python sklearn    
 CUDA version (+plot), they only allowed for 2-D, we allow any-D    
+![image](https://github.com/CannyLab/tsne-cuda/blob/master/docs/simulated_speedup.png)
 
 ## Platform, Application and Programming Model
 AWS    
@@ -28,6 +29,9 @@ Explain the code/algorithm
 Code profiling    
 Decisions taken    
 Pragmas etc    
+![image](./figures/pca_no_tmp2.png)
+![image](./figures/pca_tmp2.png)
+![image](./figures/pca_tmp_acc2.png)
 
 ## How to run the code
 Python details    
@@ -38,6 +42,7 @@ Commands to run
 
 ## Performance evaluation
 (speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done.    
+
 
 ## Discussion and Future Work
 etc    
