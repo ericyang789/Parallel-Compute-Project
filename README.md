@@ -153,11 +153,6 @@ The, we can run the compiled code just using:
 
 
 ## Performance evaluation
-(speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done.    
-
-
-
-
 
 The speedup plots shown in the following sections were all computed comparing the baseline code execution time (without GPU acceleration) to the code run using OpenACC acceleration. We obtained runtime information about each of the main functions of the code, as detailed in the previous "Code Profiling" section, but we only calculate speedups for the higher-level sections "PCA", "Core t-SNE" and "Entire Code"  (PCA + Core t-SNE).
 
