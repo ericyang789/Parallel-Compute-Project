@@ -27,8 +27,6 @@ OpenACC
 Many-core, GPU accelerated computing    
 
 ## Code Profiling and Parallel Implementation
-### t-SNE algorithm
-explain some formulas/sections
 
 ### Code profiling    
 We have profiled the execution time of the main sections of our code in order to identify the biggest bottlenecks. With this information we aimed to guide our parallelization efforts in a logical manner, focusing on the functions that take most of the execution time. 
