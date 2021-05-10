@@ -32,9 +32,9 @@ Results:
 
 	The python serial times were:
 
-	![image](./python_serial.png)   
+	![image](./figures/python_serial.png)   
 	
 	The python serial times compares to C serial times were:
 	
-	![image](./python_c_comparison_serial.png)   
+	![image](./figures/python_c_comparison_serial.png)   
 	
