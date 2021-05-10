@@ -92,9 +92,9 @@ The PCA algorithm was our first target for parallelization for several reasons. 
 
 The other two functions that take a significant amount of time are the `Householders Reduction to Bidiagonal Form` (4.34%) and the `Givens Reduction to Bidiagonal Form` (1.66%), which are the two most important functions in the Singular Value Decomposition (SVD) step used to perform PCA. These two functions cannot be successfully parallelized because they have many data dependencies and complicated matrix update steps that are intrinsically serial. The parallelization of these functions would require creating additional code, which would add an unaffordable level of complexity and would probably introduce important overheads for small or medium matrices. Indeed, other authors have reported that parallelization improvements are only observed if they use matrices of really big dimensions [6], a lot bigger than what we would be using for our project. Taking this into consideration, and the fact that these two functions together only account for 6% of the serial total time, we have decided to focus on parallelizing the  function `Calculating Covariance Matrix`. 
 
-The original implementation plan was to accelerate the PCA part using OpenACC due to its advantages for the matrix multiplication problem, and to use OpenMP in order to parallelize the core t-SNE section of the code. This approach was followed, but resulted in insignificant speedups or even speedups smaller than 1, which we think are associated to parallelization overheads. Code for our attempted OpenMP parallelization can be found as 'tsne_fns_omp.h' within the 'parallel_c_tsne' folder.
+The original implementation plan was to accelerate the PCA part using OpenACC due to its advantages for the matrix multiplication problem, and to use OpenMP in order to parallelize the core t-SNE section of the code. This approach was followed, but resulted in insignificant speedups or even speedups smaller than 1, which we think are associated to parallelization overheads. Code for our attempted OpenMP parallelization can be found as `tsne_fns_omp.h` within the `parallel_c_tsne` folder.
 
-Below are some examples of the places in the t-SNE code we tried to parallelize using OpenMP. We identified these parallelizable regions through code profiling, and they will be discussed in more detail further below. 
+Below are some examples of the places in the t-SNE code we tried to parallelize using OpenMP. We identified these parallelizable regions through code profiling, and they are discussed in more detail in the READ.ME file within the tsne_parallel_c folder. 
 
 <p align="center">
   <img width="637" alt="calc_perplexity_omp" src="https://user-images.githubusercontent.com/44482565/117673299-421cbb00-b1dd-11eb-9dcb-a3c75ff09c73.png">
@@ -109,9 +109,9 @@ Below are some examples of the places in the t-SNE code we tried to parallelize 
 
 None of our OpenMP directives resulted in significant speedup. This could be due to a combination of large communication and synchronization overheads into addition to our dataset size being too small to effectively take advantage of shared-memory parallel processing. For this reason, and also because we were already utilizing GPU hardware/instance for PCA, we chose to accelerate core t-SNE using OpenACC. 
 
-The t-SNE's algorithm contains many repetitive and identical matrix operations which are well suited for GPU computing. Based on our profiling of the t-SNE code, as well as from our understanding of the t-SNE algorithm, we identified calc_perplexity_diff() and calc_Q() as the two main bottlenecks in terms of computation time. 
+The t-SNE's algorithm contains many repetitive and identical matrix operations which are well suited for GPU computing. Based on our profiling of the t-SNE code, as well as from our understanding of the t-SNE algorithm, we identified `calc_perplexity_diff()` and `calc_Q()` as the two main bottlenecks in terms of computation time. 
 
-The pseudo code shown below describes the loop in which calc_perplexity_diff() is being called.
+The pseudo code shown below describes the loop in which `calc_perplexity_diff()` is being called.
 
 <p align="center">
    <img width="415" alt="calc_perplexity_pseudocode" src="https://user-images.githubusercontent.com/44482565/117638112-1980cb00-b1b5-11eb-9509-5cbbda6db91f.png">
@@ -119,9 +119,9 @@ The pseudo code shown below describes the loop in which calc_perplexity_diff() i
 
 
 
-As seen here, the outer for loop iterates through each row or sample in the dataset. Within each iteration, calc_perplexity_diff() is repeatedly called to perform a rootfinding bisection search to converge to a sigma value that achieves the target perplexity. While one call of the function itself is relatively quick (taking only a fraction of a second) we observed from our code profiling that t-SNE calls this function hundreds of thousands of times, resulting in long computation.
+As seen here, the outer for loop iterates through each row or sample in the dataset. Within each iteration, `calc_perplexity_diff()` is repeatedly called to perform a rootfinding bisection search to converge to a sigma value that achieves the target perplexity. While one call of the function itself is relatively quick (taking only a fraction of a second) we observed from our code profiling that t-SNE calls this function hundreds of thousands of times, resulting in long computation.
 
-Similarly, calc_Q() is another function in t-SNE that is called a large number of times, specifically during each gradient descent iteration to calculate distances between points in the embedded 2D t-SNE space. Both, calc_Q() and calc_perplexity_diff() scale with the size of the dataset i.e. number of points, which make them good targets for parallelization. 
+Similarly, `calc_Q()` is another function in t-SNE that is called a large number of times, specifically during each gradient descent iteration to calculate distances between points in the embedded 2D t-SNE space. Both, `calc_Q()` and `calc_perplexity_diff()` scale with the size of the dataset i.e. number of points, which make them good targets for parallelization. 
 
 ### Parallelization with OpenACC
 **PCA section**
@@ -143,7 +143,7 @@ Regarding the acceleration of the matrix multiplication, we have added "pragma a
 
 **Core t-SNE section**
 
-1. calc_perplexity_diff() acceleration:
+1. `calc_perplexity_diff()` acceleration:
 
 <p align="center">
   <img width="631" alt="calc_perplexity" src="https://user-images.githubusercontent.com/44482565/117586589-aabb5780-b14b-11eb-9891-0c55375647b4.png">
@@ -153,7 +153,7 @@ Regarding the acceleration of the matrix multiplication, we have added "pragma a
 Using OpenACC, we parallelized this function with acc parallel directives for both of its for loops, in addition to a loop reduction as well as a specification for the vector_length or number of threads per block to be used. The acc parallel directives here distributes the independent perplexity calculations across different GPU threads (defined by vector_length), allowing them all to run simultaneously. 
 
 
-2. calc_Q() acceleration:
+2. `calc_Q()` acceleration:
 3. 
 <p align="center">
   <img width="401" alt="calc_Q" src="https://user-images.githubusercontent.com/44482565/117586601-c1fa4500-b14b-11eb-83dd-f7b8d50ae17d.png">
