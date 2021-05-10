@@ -17,8 +17,10 @@ In summary, given M data points in N dimensional space and a chosen perplexity, 
 
 The t-SNE algorithm is especially popular in the field of single-cell transcriptomics. DNA encodes the instructions to make all the machinery in human bodies. Depending on different stages of life or disease states, different cells carry out these instructions at different rates. This process is known as transcriptomics. In a typical workflow, cells are obtained from tissues, and ribonucleic acid (RNA) molecules are extracted. RNA expression levels are measured via genomic sequencing techniques and serve as biomarkers that capture a cell’s state and function at a particular timepoint [2]. Through understanding the RNA expression profile for each cell, how much the cells are carrying out these DNA instructions can be understood. These experiments result in a large gene expression matrix, where how much each cell has expressed a certain region of our genome is quantified. Typically, these large matrices are represented such that the rows contain the genes (on the order of 30,000 for humans) and the columns contain cells (ranging from hundreds to tens of thousands depending on the experiment). Each value in the matrix can be thought of as counts. Each cell (M) is considered a data point in the dimensional space defined by the number of genes (N). Because of this large resultant matrix of RNA expression profiles, t-SNE is very beneficial to reduce the dimensionality and help visualize each individual cell in the embedded space. Here is an example of a visualization of different cell types in t-SNE space based on genomic expression profiles, where each axis represents a t-SNE reduced dimension [3]:
 
-![image](https://user-images.githubusercontent.com/59083836/117291964-35792980-aea2-11eb-9a07-8799e662e656.png)
-
+<p align="center">
+   <img width="415" alt="tsne_visual" src="https://user-images.githubusercontent.com/59083836/117291964-35792980-aea2-11eb-9a07-8799e662e656.png">
+</p>
+   
 Initially in our application, we used a dataset where the RNA expression levels of pancreatic cells of healthy individuals and patients with type 2 diabetes are profiled [3]. The full dataset contained 3229 cells of various types with 27,539 genes profiled for RNA expression. When we applied our t-SNE implementation to this genomics dataset, we found that the algorithm was having difficulty converging despite tuning different parameters in our numerical optimization algorithm. We also attempted various normalization and subsetting techniques to the dataset to no avail. To prioritize parallelization implementation of the algorithm, we pivoted to the Modified National institute of Standards and Technology (MNIST) hand-written digit dataset (data/t10k-images.idx3-ubyte) [4], which after normalization has been shown to converge with the t-SNE algorithm implemented in languages such as Python.
 
 The MNIST dataset here contains ten thousand images represented by pixel values (28 by 28) that create a hand-written digit between 0 and 9 when visualized in 2D. The pixels were flattened from the 2D 28x28 representation to a vector of length 784. These pixels were then scaled to be between 0 and 1. Hence, in our experiments each of the data matrix X represented a single hand-written digit and each column represented one of the 784 normalised pixels for said image. 
@@ -33,21 +35,27 @@ At its core, t-SNE involved a tremendous amount of matrix operations, especially
 
 t-SNE is most commonly implemented in lanaguages such as Python, R and MATLAB. A number of these implementations are available online. The graphs below [5] shows a comparison of the runtimes in python for a number of dimensionality reduction techniques for various dataset sizes going up to 25,000. We are interested in the pink (t-SNE) and green (multicore t-SNE) lines labeled on the graph. For a dataset of size 25,000 the serial t-SNE takes around 800 min whilst the multicore t-SNE takes around 550min offering a speed up of a little under 1.5 times. Despite the improvement, these execution times are still impractically long, especially when considering that gene expression matrices can have 100s of thousands of samples for 1000s of points, motivating the need for further speed up of the algorithm. 
 
-![image](./figures/python_execution_time_graphs.png)
 
+<p align="center">
+   <img width="415" alt="python_execution_time_graphs" src="./figures/python_execution_time_graphs.png">
+</p>
 
 As parallel python implementations have already been explored in literature without sufficient speed up, we decided to parallelise a compiler language implementation of t-SNE. A lower level langauge implementation (specifically lower level compared to Python, R and MATLAB) should in theory provide substantial speed up, which can then be further improved through parallelisation tehcniques. In particular, we settled on using C for which as far as we are away there was no implementation of t-SNE that exists. We hypothesize that a successful parallel implementation of t-SNE in C would benefit the dimensionality reduction community, by providing customizable parallelizability in a compiler programming language with a multitude of parallelization infrastructures available. 
 
 ### CUDA implementation
 One lower level implementations of t-SNE we were able to find was written in CUDA [7] and achieved impressive results which are shown below. In the plot 'ours' refers to the Canny Lab CUDA implementation. A few points worth bringing to attention are the X-axis in the plot (which is the number of points not the number of samples) and the fact that this implementation only allows reduction to 2 dimensions (with the authors detailing on the GitHub repository that they do not intend on implementing the code for more dimensions). Since C is a higher level and easier to work with langauge than CUDA the team felt that a C implementation would be beneficial at large as it would open the door for further parallelisation experiments (beyond the work done by this team) as well as allowing reduction to more than 2 dimensions.
 
-![image](https://github.com/CannyLab/tsne-cuda/blob/master/docs/simulated_speedup.png)
+<p align="center">
+   <img width="415" alt="simulated_speedup" src="https://github.com/CannyLab/tsne-cuda/blob/master/docs/simulated_speedup.png)">
+</p>
    
 ### C implementation
 
 A more detailed explanation of our C implementation can be found in the README file in the serial_c_tsne folder. Below we provide a plot of the execution times for our sereal C t-SNE (orange) and a python serial t-SNE impelmentation (blue) the code for which can be found in the python_comparison folder in the repository. The code was ran for the MNIST dataset using various dataset subsection sizes. The graph shows that our C implementation achieved a substantial speed up compared to the python implementation, particularly for larger dataset sizes.
-
-![image](./python_comparison/figures/python_c_comparison_serial.png)
+ 
+<p align="center">
+   <img width="415" alt="python_c_comparison_serial" src="./python_comparison/figures/python_c_comparison_serial.png">
+</p>
 
 
 
@@ -88,9 +96,16 @@ The original implementation plan was to accelerate the PCA part using OpenACC du
 
 Below are some examples of the places in the t-SNE code we tried to parallelize using OpenMP. We identified these parallelizable regions through code profiling, and they will be discussed in more detail further below. 
 
-<img width="637" alt="calc_perplexity_omp" src="https://user-images.githubusercontent.com/44482565/117673299-421cbb00-b1dd-11eb-9dcb-a3c75ff09c73.png">
+<p align="center">
+  <img width="637" alt="calc_perplexity_omp" src="https://user-images.githubusercontent.com/44482565/117673299-421cbb00-b1dd-11eb-9dcb-a3c75ff09c73.png">
+</p>
 
-<img width="549" alt="calc_sigmas_omp" src="https://user-images.githubusercontent.com/44482565/117673310-4517ab80-b1dd-11eb-8820-70305745a28f.png">
+<p align="center">
+  <img width="549" alt="calc_sigmas_omp" src="https://user-images.githubusercontent.com/44482565/117673310-4517ab80-b1dd-11eb-8820-70305745a28f.png">
+</p>
+
+
+
 
 None of our OpenMP directives resulted in significant speedup. This could be due to a combination of large communication and synchronization overheads into addition to our dataset size being too small to effectively take advantage of shared-memory parallel processing. For this reason, and also because we were already utilizing GPU hardware/instance for PCA, we chose to accelerate core t-SNE using OpenACC. 
 
@@ -98,7 +113,11 @@ The t-SNE's algorithm contains many repetitive and identical matrix operations w
 
 The pseudo code shown below describes the loop in which calc_perplexity_diff() is being called.
 
-<img width="415" alt="calc_perplexity_pseudocode" src="https://user-images.githubusercontent.com/44482565/117638112-1980cb00-b1b5-11eb-9509-5cbbda6db91f.png">
+<p align="center">
+   <img width="415" alt="calc_perplexity_pseudocode" src="https://user-images.githubusercontent.com/44482565/117638112-1980cb00-b1b5-11eb-9509-5cbbda6db91f.png">
+</p>
+
+
 
 As seen here, the outer for loop iterates through each row or sample in the dataset. Within each iteration, calc_perplexity_diff() is repeatedly called to perform a rootfinding bisection search to converge to a sigma value that achieves the target perplexity. While one call of the function itself is relatively quick (taking only a fraction of a second) we observed from our code profiling that t-SNE calls this function hundreds of thousands of times, resulting in long computation.
 
@@ -126,14 +145,20 @@ Regarding the acceleration of the matrix multiplication, we have added "pragma a
 
 1. calc_perplexity_diff() acceleration:
 
-<img width="631" alt="calc_perplexity" src="https://user-images.githubusercontent.com/44482565/117586589-aabb5780-b14b-11eb-9891-0c55375647b4.png">
+<p align="center">
+  <img width="631" alt="calc_perplexity" src="https://user-images.githubusercontent.com/44482565/117586589-aabb5780-b14b-11eb-9891-0c55375647b4.png">
+</p>
+
 
 Using OpenACC, we parallelized this function with acc parallel directives for both of its for loops, in addition to a loop reduction as well as a specification for the vector_length or number of threads per block to be used. The acc parallel directives here distributes the independent perplexity calculations across different GPU threads (defined by vector_length), allowing them all to run simultaneously. 
 
 
 2. calc_Q() acceleration:
+3. 
+<p align="center">
+  <img width="401" alt="calc_Q" src="https://user-images.githubusercontent.com/44482565/117586601-c1fa4500-b14b-11eb-83dd-f7b8d50ae17d.png">
+</p>
 
-<img width="401" alt="calc_Q" src="https://user-images.githubusercontent.com/44482565/117586601-c1fa4500-b14b-11eb-83dd-f7b8d50ae17d.png">
 
 Adding a parallel directive for the for loop as seen here allows all the GPU threads to perform independent distance calculations simultaneously. In addition to this, we specified the matrices to be copied in and out of the for loop, as well as adding a loop reduction for the running sum variable 'Z'. 
 
@@ -219,8 +244,11 @@ The speedup plots generated as here described are shown below:
 
 
 **PCA section speedup**
+<p align="center">
+  <img width="415" alt="calc_Q" src="./figures/speedup_pca_vs_N_M.png">
+</p>
 
-![image](./figures/speedup_pca_vs_N_M.png)
+
 
 The speedup achieved in the PCA section were good, as we were expecting due to the ability of GPUs to accelerate matrix multiplications. The speedup curves showed a increasing trend with matrix size, both for M and N. This increase in performance seems to be especially higher when increasing N, which might be explained by the code having 2 outer for loops over N and only the inner loop is over M. With this reasoning, increasing N will increase the serial computational time more than if we increase M, which will leave more room for improvement from parallelization, and therefore more noticeable speedups. 
 
@@ -228,7 +256,11 @@ Additionally, it is worth noting that for very small matrices with small M and s
 
 In addition to changing M and N, as in the previous speedup plot, we also tried changing the vector length for OpenACC, as shown here:
 
-<img src="./figures/runtime_pca_vs_vector_size.png" alt="image" style="zoom:30%;" />
+<p align="center">
+  <img width="615" alt="runtime_pca_vs_vector_size" src="./figures/runtime_pca_vs_vector_size.png">
+</p>
+
+
 
 We observe that the best performance is achieved when using vector size 32. For vector sizes that are too small or too big, the execution time increases because we are either not exploiting the parallelization enough, or because too much parallelization leads to having overheads that are greater than the increase in performance.
 
@@ -236,14 +268,22 @@ We observe that the best performance is achieved when using vector size 32. For 
 
 **Core t-SNE speedup**
 
-![image](./figures/speedup_tsne_vs_N_M.png)
+<p align="center">
+  <img width="415" alt="speedup_tsne_vs_N_M" src="./figures/speedup_tsne_vs_N_M.png">
+</p>
+
+
 
 Using the same dataset size benchmarks as those in our PCA speedup calculations, we calculated t-SNE's speedup as a function of dataset size, we can see that openACC worked quite well, achieving a maximum speedup of around 3.2 for our largest dataset. As expected, larger dataset sizes showed greater speedup, while smaller datasets such as those with 1000 or less samples were actually slower than baseline due to communication overheads, in addition to the time taken to copy data in and out of the GPU. 
 
 
 **Total (PCA+t-SNE) speedup**
 
-![image](./figures/speedup_total_vs_N_M.png)
+<p align="center">
+  <img width="415" alt="speedup_total_vs_N_M" src="./figures/speedup_total_vs_N_M.png">
+</p>
+
+
 
 In terms of the speedup for the the entire code with both PCA and t-SNE sections combined, we saw a similar trend in speedup. The speedups seen were somewhere in between those reported in pca and those reported from tsne. We found the biggest speedup to be around 4 which was achieved with our biggest dataset (in terms of features and samples). 
 
@@ -251,7 +291,11 @@ In terms of the speedup for the the entire code with both PCA and t-SNE sections
 
 Comparing to the existing Python implementation, we saw that our accelerated C implementation achieved significant speedup, with the effect most noticeable with larger data sizes.
 
-![image](./figures/speedup_total_CvsPython_vs_M.png)
+<p align="center">
+  <img width="415" alt="speedup_total_CvsPython_vs_M" src="./figures/speedup_total_CvsPython_vs_M.png">
+</p>
+
+
 
 
 
