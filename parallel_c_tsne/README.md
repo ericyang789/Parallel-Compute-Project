@@ -32,6 +32,8 @@
     The file prints out statements of the current execution steps as well as the execution times for reference.
     The expected speedups for acc parallelization are discussed in the main README.
     
+### A note on OpenMP 
+     
     We also attempted OpenMP parallelization but did not yield fruitful results as discussed in the main README.
     If you want to test out OpenMP parallelization:
             
@@ -45,7 +47,7 @@
     
             ./tsne
   
-   ### A note on OpenMP 
+  
     One can expect these results for the given parameters below if running the OpenMP parallelization with the AWS instance type specified in the main README.
     
       M: 2500
