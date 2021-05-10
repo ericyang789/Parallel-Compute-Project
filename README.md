@@ -46,7 +46,7 @@ As parallel python implementations have already been explored in literature with
 One lower level implementations of t-SNE we were able to find was written in CUDA [7] and achieved impressive results which are shown below. In the plot 'ours' refers to the Canny Lab CUDA implementation. A few points worth bringing to attention are the X-axis in the plot (which is the number of points not the number of samples) and the fact that this implementation only allows reduction to 2 dimensions (with the authors detailing on the GitHub repository that they do not intend on implementing the code for more dimensions). Since C is a higher level and easier to work with langauge than CUDA the team felt that a C implementation would be beneficial at large as it would open the door for further parallelisation experiments (beyond the work done by this team) as well as allowing reduction to more than 2 dimensions.
 
 <p align="center">
-   <img width="415" alt="simulated_speedup" src="https://github.com/CannyLab/tsne-cuda/blob/master/docs/simulated_speedup.png)">
+   <img width="415" alt="simulated_speedup" src="https://github.com/CannyLab/tsne-cuda/blob/master/docs/simulated_speedup.png?raw=true)">
 </p>
    
 ### C implementation
@@ -314,5 +314,5 @@ In conclusion, we implemented a very complicated t-SNE algorithm in C from scrat
 4.	"THE MNIST DATABASE of handwritten digits". Yann LeCun, Courant Institute, NYU Corinna Cortes, Google Labs, New York Christopher J.C. Burges, Microsoft Research, Redmond.
 5.	Performance Comparison of Dimension Reduction Implementations¶. Performance Comparison of Dimension Reduction Implementations - umap 0.5 documentation. (n.d.). https://umap-learn.readthedocs.io/en/latest/benchmarking.html. 
 6.	Wang, X. (2016). Using reconfigurable computing technology to accelerate matrix decomposition and applications.
-7.	CUDE implementation https://github.com/CannyLab/tsne-cuda
+7.	CUDA implementation https://github.com/CannyLab/tsne-cuda
 
