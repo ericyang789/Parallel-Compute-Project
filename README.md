@@ -84,7 +84,7 @@ Regarding the acceleration of the matrix multiplication, we have added "pragma a
 
 **Core t-SNE section**
 
-1. calc_perplexity() acceleration:
+1. calc_perplexity_diff() acceleration:
 
 <img width="631" alt="calc_perplexity" src="https://user-images.githubusercontent.com/44482565/117586589-aabb5780-b14b-11eb-9891-0c55375647b4.png">
 
