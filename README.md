@@ -66,7 +66,7 @@ The t-SNE's algorithm contains many repetitive and identical matrix operations w
 
 The pseudo code shown here describes the loop in which calc_perplexity_diff() is being called. As seen, calc_perplexity_diff() is repeatedly called to perform a rootfinding bisection search to converge to a sigma value that achieves the target perplexity. While one call of the function itself is relatively quick (~0.004s) we observed from our initial code profiling that t-SNE calls this function hundreds of thousands of times, resulting in long computation times. 
 
-Similarly, calc_Q() is another function in t-SNE that is called a large number of times, specifically during each gradient descent iteration to calculate distances between points in the embedded 2D t-SNE space. Both, calc_Q() and calc_perplexity_diff() scale with the size of the dataset i.e. number of points, which make them good targets for parallelization.
+Similarly, calc_Q() is another function in t-SNE that is called a large number of times, specifically during each gradient descent iteration to calculate distances between points in the embedded 2D t-SNE space. Both, calc_Q() and calc_perplexity_diff() scale with the size of the dataset i.e. number of points, which make them good targets for parallelization. 
 
 ### Parallelization with OpenACC
 **PCA section**
@@ -92,7 +92,7 @@ Regarding the acceleration of the matrix multiplication, we have added "pragma a
 
 <img width="631" alt="calc_perplexity" src="https://user-images.githubusercontent.com/44482565/117586589-aabb5780-b14b-11eb-9891-0c55375647b4.png">
 
-Using OpenACC, we parallelized this function with acc parallel directives for both of its for loops, in addition to a loop reduction as well as a specification for the vector_length or number of threads per block to be used. 
+Using OpenACC, we parallelized this function with acc parallel directives for both of its for loops, in addition to a loop reduction as well as a specification for the vector_length or number of threads per block to be used. The acc parallel directive here distributes the independent perplexity calculations across different GPU nodes, allowing them all to run simultaneously. 
 
 
 2. calc_Q() acceleration:
