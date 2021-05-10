@@ -19,7 +19,7 @@ void mat_multiply(int r1, int c1, int r2, int c2,
 	
    // Multiplying first and second matrices and storing it in c
    //#pragma acc kernels copyin(a,b) copy(c)
-   #pragma omp parallel for default(none) shared(a,b,c) private(i,j,k)
+   //#pragma omp parallel for default(none) shared(a,b,c,r1,c2,c1) //private(i,j,k)
    for (int i = 0; i < r1; ++i) {
       for (int j = 0; j < c2; ++j) {
 		float tmp = 0;
