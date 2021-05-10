@@ -56,7 +56,7 @@ The other two functions that take a significant amount of time are the `Househol
 
 The original implementation plan was to accelerate the PCA part using OpenACC due to its advantages for the matrix multiplication problem, and to use OpenMP in order to parallelize the core t-SNE section of the code. This approach was followed, but resulted in insignificant speedups for reasons that were not possible to determine. Code for our attempted OpenMP parallelization can be found as 'tsne_fns_omp.h' within the 'parallel_c_tsne' folder. For this reason, and also because we were already utilizing GPU hardware/instance for PCA, we chose to accelerate core t-SNE using OpenACC. 
 
-The t-SNE's algorithm contains many repetitive and identical matrix operations which are well suited for GPU computing. Based on our initial profiling of the t-SNE code as well as from our understanding of the t-SNE algorithm, we identified calc_perplexity_diff() and calc_Q() as the two main bottlenecks in the algorithm. 
+The t-SNE's algorithm contains many repetitive and identical matrix operations which are well suited for GPU computing. Based on our profiling of the t-SNE code, as well as from our understanding of the t-SNE algorithm, we identified calc_perplexity_diff() and calc_Q() as the two main bottlenecks in terms of computation time. 
 
 <img width="415" alt="calc_perplexity_pseudocode" src="https://user-images.githubusercontent.com/44482565/117638112-1980cb00-b1b5-11eb-9509-5cbbda6db91f.png">
 
