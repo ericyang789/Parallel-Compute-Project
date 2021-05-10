@@ -74,7 +74,7 @@ The other two functions that take a significant amount of time are the `Househol
 
 The original implementation plan was to accelerate the PCA part using OpenACC due to its advantages for the matrix multiplication problem, and to use shared memory parallel proceessing (OpenMP) in order to parallelize the core t-SNE section of the code. This approach was followed, but resulted in insignificant speedups or even speedups smaller than 1, which we think are associated to parallelization overheads. Code for our attempted OpenMP parallelization can be found as 'tsne_fns_omp.h' within the 'parallel_c_tsne' folder. 
 
-Below are some examples of the places in the t-SNE code we tried to parallelize using OpenMP. 
+Below are some examples of the places in the t-SNE code we tried to parallelize using OpenMP. We identified these locations in the code through code profiling, and these will be discussed in more detailed further below. 
 
 <img width="637" alt="calc_perplexity_omp" src="https://user-images.githubusercontent.com/44482565/117670238-472c3b00-b1da-11eb-82f2-1f897d39ade9.png">
 
