@@ -61,7 +61,24 @@
                     within the chosen read in file you must change the path to the data location (default data folder one directory up)
                     dimensions of the data to be read in must also be defined (M=number of rows, N =number of columns)
     
-            Define dimensions: dimensions of the input data array must be defined in 
+            Define dimensions: 
+            
+                    dimensions of the input data array must be defined in both the chosen read in file and the tsne.c script
+                    M = number of rows
+                    N = number of columns (features)
+                    K: dimensions of PCA used must also be defined
+                    
+  ### Compiling
+  
+    The script can be compiled with gcc by running
+    
+            gcc tsne.c -o tsne
+            
+    And run using
+    
+            ./tsne
+            
+    The file prints out statements of the current execution steps as well as the execution times for reference
    
       
       
