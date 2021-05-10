@@ -172,12 +172,11 @@ void calc_Q(int d1, double Y[][2], double Q[][d1]){
 			for (int k=0; k<2; k++){
 				norm+=pow(Y[i][k]-Y[j][k],2);}
 			Q[i][j]=1.0/(1.0+norm);
-			if (i<3 && j<2){printf("In calc_Q Qij: %f \n", Q[i][j]);}
 			Q[j][i]=Q[i][j];
 			Z+=2*Q[i][j];
 		}
 		}
-	printf("Z: %f \n", Z);
+
 	for (int i=0; i<d1; i++) {
 		for (int j=0; j<d1; j++) {
 			Q[i][j]=Q[i][j]/Z;
@@ -221,7 +220,7 @@ void KL_dist(int d1, double Y[][2], double P[][d1], double Q[][d1], double grad[
 			for (int k=0; k<2; k++){
 				grad[i][k]+=(P[i][j]-Q[i][j])*(Y[i][k]-Y[j][k])*(1.0/(1.0+norm));}
 
-			if (i<3 && j<2){printf("Pij: %f \n",P[i][j]);printf("Qij: %f \n",Q[i][j]);}
+
 
 			} // end of j loop
 

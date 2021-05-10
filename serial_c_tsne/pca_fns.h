@@ -25,8 +25,7 @@ void mat_multiply(int r1, int c1, int r2, int c2,
    }
 }
 
-//void multiply(int m1, int m2, int mat1[][m2], int n1,
-//              int n2, int mat2[][n2])
+// Matrix multiplication - alternative method
 void multiply(int m1, int m2, int n1, int n2,
 		     double mat1[m1][m2], double mat2[n1][n2], double res[m1][n2]
                       )
@@ -68,7 +67,7 @@ void reduce_to_k(int new_dim, int n, double Vt[n][n], double Vtk[n][new_dim])
 
 
 
-
+// Subtract column means for each element in input data
 void subtract_col_means(int d1, int d2, double data[][d2]){
 	double col_mean[d2];
 	for (int i = 0; i < d2; ++i) {
@@ -76,7 +75,7 @@ void subtract_col_means(int d1, int d2, double data[][d2]){
 
 	}
 
-	printf(" Calculating means \n");
+	//printf(" Calculating means \n");
 	for (int i=0; i<d2; i++) {
 		for (int j=0; j<d1; j++) {
 			col_mean[i]=col_mean[i]+data[j][i];
@@ -85,7 +84,7 @@ void subtract_col_means(int d1, int d2, double data[][d2]){
 		col_mean[i]=col_mean[i]/d1;
 	}
 
-	printf(" Taking away means \n");
+	//printf(" Taking away means \n");
 	// Taking mean away from data test_image
 	for (int i=0; i<d1; i++) {
 		for (int j=0; j<d2; j++) {
@@ -101,7 +100,7 @@ void calculate_covariance(int d1, int d2, double data[][d2], double data_transpo
 	// Calculating the covariance matrix S= np.dot(A.T, A)/M
 
 
-	printf(" Calculating covariance matrix: getting A.T \n");
+	//printf(" Calculating covariance matrix: getting A.T \n");
 	// Get A.T
 
 
@@ -110,7 +109,7 @@ void calculate_covariance(int d1, int d2, double data[][d2], double data_transpo
           data_transpose[i][j] = data[j][i];
 
 
-	printf(" Calculating covariance matrix: getting A.T * A \n");
+	//printf(" Calculating covariance matrix: getting A.T * A \n");
 	// Calculate S
 	//mat_multiply(N, M, M, N, At, A, S);
 

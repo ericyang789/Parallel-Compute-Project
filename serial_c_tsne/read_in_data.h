@@ -4,12 +4,12 @@
 #include <fcntl.h>
 #include <string.h>
 
-// set appropriate path for data
+// Path to data
 #define DATA "../data/t10k-images.idx3-ubyte"
 #define DATA_LABEL "../data/t10k-labels.idx1-ubyte"
 
-#define Ns 784 // 28*28
-#define Ms 2500 //NUM_TEST
+#define Ns 784 // Number of columns
+#define Ms 2500 // Number of rows
 #define LEN_INFO_IMAGE 4
 #define LEN_INFO_LABEL 2
 
