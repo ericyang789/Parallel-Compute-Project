@@ -39,13 +39,15 @@ t-SNE is most commonly implemented in lanaguages such as Python, R and MATLAB. A
 As parallel python implementations have already been explored in literature without sufficient speed up, we decided to parallelise a compiler language implementation of t-SNE. A lower level langauge implementation (specifically lower level compared to Python, R and MATLAB) should in theory provide substantial speed up, which can then be further improved through parallelisation tehcniques. In particular, we settled on using C for which as far as we are away there was no implementation of t-SNE that exists. We hypothesize that a successful parallel implementation of t-SNE in C would benefit the dimensionality reduction community, by providing customizable parallelizability in a compiler programming language with a multitude of parallelization infrastructures available. 
 
 ### CUDA implementation
-One lower level implementations of t-SNE we were able to find was written in CUDA and achieved impressive results which are shown below. A few points worth bringing to attention are the X-axis in the plot (which is the number of points not the number of samples) and the fact that this implementation only allows reduction to 2 dimensions (with the authors detailing on the GitHub repository that they do not intend on implementing the code for more dimensions). Since C is a higher level and easier to work with langauge than CUDA the team felt that a C implementation would be beneficial at large as it would open the door for further parallelisation experiments (beyon the work done by this team) as well as allowing reduction to more than 2 dimensions.
+One lower level implementations of t-SNE we were able to find was written in CUDA [7] and achieved impressive results which are shown below. In the plot 'ours' refers to the Canny Lab CUDA implementation. A few points worth bringing to attention are the X-axis in the plot (which is the number of points not the number of samples) and the fact that this implementation only allows reduction to 2 dimensions (with the authors detailing on the GitHub repository that they do not intend on implementing the code for more dimensions). Since C is a higher level and easier to work with langauge than CUDA the team felt that a C implementation would be beneficial at large as it would open the door for further parallelisation experiments (beyond the work done by this team) as well as allowing reduction to more than 2 dimensions.
 
 ![image](https://github.com/CannyLab/tsne-cuda/blob/master/docs/simulated_speedup.png)
    
 ### C implementation
 
-A more detailed explanation of our C implementation can be found in the README file in the serial_c_tsne folder. Below we provide a plot of the execution times for our sereal C t-SNE (orange) and a python serial t-SNE impelmentation (blue) the code for which can be found in the python_comparison folder in the repository.
+A more detailed explanation of our C implementation can be found in the README file in the serial_c_tsne folder. Below we provide a plot of the execution times for our sereal C t-SNE (orange) and a python serial t-SNE impelmentation (blue) the code for which can be found in the python_comparison folder in the repository. The code was ran for the MNIST dataset using various dataset subsection sizes. The graph shows that our C implementation achieved a substantial speed up compared to the python implementation, particularly for larger dataset sizes.
+
+![image][./python_comparison/figures/python_c_comparison_serial.png]
 
 
 
@@ -259,4 +261,5 @@ In conclusion, we implemented a very complicated t-SNE algorithm in C from scrat
 4.	"THE MNIST DATABASE of handwritten digits". Yann LeCun, Courant Institute, NYU Corinna Cortes, Google Labs, New York Christopher J.C. Burges, Microsoft Research, Redmond.
 5.	Performance Comparison of Dimension Reduction Implementations¶. Performance Comparison of Dimension Reduction Implementations - umap 0.5 documentation. (n.d.). https://umap-learn.readthedocs.io/en/latest/benchmarking.html. 
 6.	Wang, X. (2016). Using reconfigurable computing technology to accelerate matrix decomposition and applications.
+7.	CUDE implementation https://github.com/CannyLab/tsne-cuda
 
