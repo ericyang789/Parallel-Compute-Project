@@ -12,7 +12,7 @@ Folder structure:
 	execution_time.ipynb/ 
 				contains the code for plotting the serial python and C t-SNE results for MNIST datasets of varying size
 
-Parameters and data used for python execution:
+### Parameters and data used for python execution:
 
 	PCA: K=50 used for dimensionality reduction
 
@@ -23,18 +23,18 @@ Parameters and data used for python execution:
 		Varying sample sizes, M (number of digits) were used with M=100,400,1000,4000 and 8000
 
 
-Reproducibility:
+### Reproducibility:
 
 	The code was run using python 3 on a MacBook Pro with 16GB memory. 
 	All the packages needed execute the code are imported at the top of the script.
 	
-Results:
+### Results:
 
-	The python serial times were:
+The python serial times were:
 
-	![image](./figures/python_serial.png)   
+![image](./figures/python_serial.png)   
 	
-	The python serial times compares to C serial times were:
+The python serial times compares to C serial times were:
 	
-	![image](./figures/python_c_comparison_serial.png)   
+![image](./figures/python_c_comparison_serial.png)   
 	
