@@ -59,7 +59,7 @@
     Another region was the while loops within our calc_sigmas() function. We defined a pragma omp parallel directive in order to allow both while loops to be performed simulatenously and independently across different cores. 
       
 
-One can expect these results for the given parameters below if running the OpenMP parallelization with the AWS instance type specified in the main README and with 4 cores.
+One can expect these results for the given parameters below if running the OpenMP parallelization with the AWS instance type specified in the main README and with 8 cores.
     
     M: 2500
     N: 784
