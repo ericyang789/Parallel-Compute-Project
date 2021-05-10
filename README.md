@@ -72,7 +72,17 @@ The PCA algorithm was our first target for parallelization for several reasons. 
 
 The other two functions that take a significant amount of time are the `Householders Reduction to Bidiagonal Form` (4.34%) and the `Givens Reduction to Bidiagonal Form` (1.66%), which are the two most important functions in the Singular Value Decomposition (SVD) step used to perform PCA. These two functions cannot be successfully parallelized because they have many data dependencies and complicated matrix update steps that are intrinsically serial. The parallelization of these functions would require creating additional code, which would add an unaffordable level of complexity and would probably introduce important overheads for small or medium matrices. Indeed, other authors have reported that parallelization improvements are only observed if they use matrices of really big dimensions [6], a lot bigger than what we would be using for our project. Taking this into consideration, and the fact that these two functions together only account for 6% of the serial total time, we have decided to focus on parallelizing the  function `Calculating Covariance Matrix`. 
 
-The original implementation plan was to accelerate the PCA part using OpenACC due to its advantages for the matrix multiplication problem, and to use OpenMP in order to parallelize the core t-SNE section of the code. This approach was followed, but resulted in insignificant speedups or even speedups smaller than 1, which we think are associated to parallelization overheads. Code for our attempted OpenMP parallelization can be found as 'tsne_fns_omp.h' within the 'parallel_c_tsne' folder. For this reason, and also because we were already utilizing GPU hardware/instance for PCA, we chose to accelerate core t-SNE using OpenACC. 
+The original implementation plan was to accelerate the PCA part using OpenACC due to its advantages for the matrix multiplication problem, and to use shared memory parallel proceessing (OpenMP) in order to parallelize the core t-SNE section of the code. This approach was followed, but resulted in insignificant speedups or even speedups smaller than 1, which we think are associated to parallelization overheads. Code for our attempted OpenMP parallelization can be found as 'tsne_fns_omp.h' within the 'parallel_c_tsne' folder. 
+
+Below are some examples of the places in the t-SNE code we tried to parallelize using OpenMP. 
+
+<img width="637" alt="calc_perplexity_omp" src="https://user-images.githubusercontent.com/44482565/117670238-472c3b00-b1da-11eb-82f2-1f897d39ade9.png">
+
+<img width="549" alt="calc_sigmas_omp" src="https://user-images.githubusercontent.com/44482565/117670256-4b585880-b1da-11eb-93a1-d86d2721c9d2.png">
+
+ None of our OpenMP directives resulted in significant speedup. This could be due to a combination of large overheads and a dataset size that is too small to effectively take advantage of shared-memory parallel processing.
+
+For the reason, and also because we were already utilizing GPU hardware/instance for PCA, we chose to accelerate core t-SNE using OpenACC. 
 
 The t-SNE's algorithm contains many repetitive and identical matrix operations which are well suited for GPU computing. Based on our profiling of the t-SNE code, as well as from our understanding of the t-SNE algorithm, we identified calc_perplexity_diff() and calc_Q() as the two main bottlenecks in terms of computation time. 
 
