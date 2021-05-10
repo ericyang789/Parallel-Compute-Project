@@ -237,7 +237,9 @@ Using the same dataset size benchmarks as those in our PCA speedup calculations,
 
 In terms of the speedup for the the entire code with both PCA and t-SNE sections combined, we saw a similar trend in speedup. The speedups seen were somewhere in between those reported in pca and those reported from tsne. We found the biggest speedup to be around 4 which was achieved with our biggest dataset (in terms of features and samples). 
 
-**Total speedup comparing to Python sklearn**
+**Total speedup comparing to Python implementation**
+
+Comparing to the existing Python implementation, we saw that our accelerated C implementation achieved significant speedup, with the effect most noticeable with larger data sizes.
 
 ![image](./figures/speedup_total_CvsPython_vs_M.png)
 
