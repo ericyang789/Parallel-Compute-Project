@@ -60,11 +60,11 @@ The other two functions that take a significant amount of time are the `Househol
 
 The original implementation plan was to accelerate the PCA part using OpenACC due to its advantages for the matrix multiplication problem, and to use OpenMP in order to parallelize the core t-SNE section of the code. This approach was followed, but resulted in insignificant speedups for reasons that were not possible to determine. Code for our attempted OpenMP parallelization can be found as 'tsne_fns_omp.h' within the 'parallel_c_tsne' folder. For this reason, and also because we were already utilizing GPU hardware/instance for the PCA part, we chose to parallelize core t-SNE using OpenACC. 
 
-The t-SNE's algorithm contains many repetitive and identical matrix operations which are well suited for GPU computing. Based on our initial profiling of the t-SNE code as well as from our understanding of the t-SNE algorithm, we identified calc_perplexity_diff() and calc_Q() as the two main bottleneck. 
+The t-SNE's algorithm contains many repetitive and identical matrix operations which are well suited for GPU computing. Based on our initial profiling of the t-SNE code as well as from our understanding of the t-SNE algorithm, we identified calc_perplexity_diff() and calc_Q() as the two main bottlenecks in the algorithm. 
 
 <img width="415" alt="calc_perplexity_pseudocode" src="https://user-images.githubusercontent.com/44482565/117638112-1980cb00-b1b5-11eb-9509-5cbbda6db91f.png">
 
-The pseudo code shown here describes the loop in which calc_perplexity_diff() is being called. As seen, calc_perplexity_diff() is repeatedly called to perform a rootfinding bisection search to find the sigma value that achieves the target perplexity. While one call of the function itself is relatively quick (~0.004s) t-SNE may typically calls this function hundreds of thousands of times, resulting in long computation times. 
+The pseudo code shown here describes the loop in which calc_perplexity_diff() is being called. As seen, calc_perplexity_diff() is repeatedly called to perform a rootfinding bisection search to find the sigma value that achieves the target perplexity. While one call of the function itself is relatively quick (~0.004s) we observed from our initial code profiling that t-SNE calls this function hundreds of thousands of times, resulting in long computation times. 
 
 Similarly, calc_Q() is another function in t-SNE that is called a large number of times, specifically during each gradient descent iteration to calculate distances between points in the embedded 2D t-SNE space. Both, calc_Q() and calc_perplexity_diff() scale with the size of the dataset, which make them good targets for parallelization.
 
