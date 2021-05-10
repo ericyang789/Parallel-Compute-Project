@@ -104,11 +104,7 @@ Adding a parallel directive for the for loop as seen here allows all the GPU thr
 ## Reproducibility
 ### Python details    
 
-
-
-anything we want to add here?
-
-
+The python code was ran using python 3. More detail on the code can be found in the python_comparison folder documentation.
 
 ### AWS instance details    
 
