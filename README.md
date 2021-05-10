@@ -208,16 +208,9 @@ We observe that the best performance is achieved when using vector size 32. For 
 
 
 
-## Discussion and Future Work
-etc    
+## Goals Achieved and Future Work
 
-
-
-etc
-
-
-
-
+In conclusion, we implemented a very complicated t-SNE algorithm in C from scratch that combines concepts from fields such as information theory, numerical optimization and high performance computing. With an implementation in a lower level programming language like C, we open the door to many parallelization and optimization possibilities for t-SNE. In terms of big compute parallelization, we were able to validate our design intentions and tackled areas of the algorithm that yielded the most fruitful speedups. While we achieved significant speedup compared to existing work, we also acknowledge some limitations in our implementation. First, the logical next step is to explore more complex optimization algorithms that converge a wider variety of more heterogeneous datasets. Such implementation would make our algorithm more versatile and flexible to datasets derived from different fields. In addition, there’s always more parallelization that can be done in our implementation that contains hundreds of lines of code. It would be interesting to explore other levels of parallelism with distributed-memory parallel processing or parallel data processing if there is a need to process large number of datasets. 
 
 
 ## References
