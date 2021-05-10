@@ -62,6 +62,10 @@ The original implementation plan was to accelerate the PCA part using OpenACC du
 
 The t-SNE's algorithm contains many repetitive and identical matrix operations which are well suited for GPU computing. Based on our initial profiling of the t-SNE code as well as from our understanding of the t-SNE algorithm, we identified calc_perplexity_diff() and calc_Q() as the two main bottleneck. 
 
+<img width="415" alt="calc_perplexity_pseudocode" src="https://user-images.githubusercontent.com/44482565/117638112-1980cb00-b1b5-11eb-9509-5cbbda6db91f.png">
+
+The pseudo code shown here describes the loop in which calc_perplexity() is being called. As seen, calc_perplexity_diff is repeatedly called to perform a rootfinding bisection search to find the sigma value that achieves the target perplexity. While one call of the function itself is relatively quick (~0.004s) t-SNE may typically calls this function hundreds of thousands of times, resulting in long computation times. 
+
 ### Parallelization with OpenACC
 **PCA section**
 
@@ -83,10 +87,6 @@ Regarding the acceleration of the matrix multiplication, we have added "pragma a
 **Core t-SNE section**
 
 1. calc_perplexity() acceleration:
-
-<img width="415" alt="calc_perplexity_pseudocode" src="https://user-images.githubusercontent.com/44482565/117638112-1980cb00-b1b5-11eb-9509-5cbbda6db91f.png">
-
-The pseudo code shown above describes the loop in which calc_perplexity() is being called. As seen, calc_perplexity_diff is repeatedly called to perform a rootfinding bisection search to find the sigma value that achieves the target perplexity. While one call of the function itself is quick (~0.004s) it can sometimes be called hundreds of thousands of times, resulting in long computation times. 
 
 <img width="631" alt="calc_perplexity" src="https://user-images.githubusercontent.com/44482565/117586589-aabb5780-b14b-11eb-9891-0c55375647b4.png">
 
