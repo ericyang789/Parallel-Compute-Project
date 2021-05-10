@@ -27,3 +27,14 @@ Reproducibility:
 
 	The code was run using python 3 on a MacBook Pro with 16GB memory. 
 	All the packages needed execute the code are imported at the top of the script.
+	
+Results:
+
+	The python serial times were:
+
+	![image](./python_serial.png)   
+	
+	The python serial times compares to C serial times were:
+	
+	![image](./python_c_comparison_serial.png)   
+	
