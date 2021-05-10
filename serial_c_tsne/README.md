@@ -68,6 +68,15 @@
                     N = number of columns (features)
                     K: dimensions of PCA used must also be defined
                     
+            Parameter tunning:
+            
+                    The script implements both the bisection method and gradient descent
+                    The error and maximum number of iterations can be set for these in the tsne.c file
+                    The learning rate alpha for gradient descent can also be set 
+                    The target_perplexity variable for tSNE can modified at the top of the tsne.c script
+                    
+              
+                    
   ### Compiling
   
     The script can be compiled with gcc by running
