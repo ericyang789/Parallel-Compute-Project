@@ -48,3 +48,26 @@
             data is read into the M x N 'data' array
             
                     
+                    
+   ### Running the script
+   
+    Adaptations to be made to the files prior to running:
+    
+            Read in file: 
+                    
+                    depending on the format the data was saved in either the read_csv.h or read_in_data.h file must be included at the top of tsne.c 
+                    both read in files have been defined in such a way that no other parts of tsne.c need to be changed
+                    
+                    within the chosen read in file you must change the path to the data location (default data folder one directory up)
+                    dimensions of the data to be read in must also be defined (M=number of rows, N =number of columns)
+    
+            Define dimensions: dimensions of the input data array must be defined in 
+   
+      
+      
+      
+      
+      
+      
+      
+      
