@@ -47,7 +47,7 @@ One lower level implementations of t-SNE we were able to find was written in CUD
 
 A more detailed explanation of our C implementation can be found in the README file in the serial_c_tsne folder. Below we provide a plot of the execution times for our sereal C t-SNE (orange) and a python serial t-SNE impelmentation (blue) the code for which can be found in the python_comparison folder in the repository. The code was ran for the MNIST dataset using various dataset subsection sizes. The graph shows that our C implementation achieved a substantial speed up compared to the python implementation, particularly for larger dataset sizes.
 
-![image][./python_comparison/figures/python_c_comparison_serial.png]
+![image](./python_comparison/figures/python_c_comparison_serial.png)
 
 
 
