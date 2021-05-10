@@ -94,6 +94,8 @@ Regarding the acceleration of the matrix multiplication, we have added "pragma a
 
 For the parallelization of the t-SNE code, we chose to also use OpenACC which is suited to parallelizing t-SNE's many repetitive and identical matrix operations. Based on our initial profiling of the tsne code as well as from our understanding of the t-SNE algorithm, we identified calc_perplexity_diff() and calc_Q() as the two main bottlenecks in the code.
 
+1. calc_perplexity() acceleration:
+
 <img width="415" alt="calc_perplexity_pseudocode" src="https://user-images.githubusercontent.com/44482565/117638112-1980cb00-b1b5-11eb-9509-5cbbda6db91f.png">
 
 The pseudo code shown above describes the loop in which calc_perplexity() is being called. As seen, calc_perplexity_diff is repeatedly called to perform a rootfinding bisection search to find the sigma value that achieves the target perplexity. While one call of the function itself is quick (~0.004s) it can sometimes be called hundreds of thousands of times, resulting in long computation times. 
@@ -103,8 +105,11 @@ The pseudo code shown above describes the loop in which calc_perplexity() is bei
 Using OpenACC, we parallelized this function with acc parallel directives for both of its for loops, in addition to a loop reduction as well as a specification for the vector_length or number of threads per block to be used. 
 
 
+2. calc_Q() acceleration:
+
 <img width="401" alt="calc_Q" src="https://user-images.githubusercontent.com/44482565/117586601-c1fa4500-b14b-11eb-83dd-f7b8d50ae17d.png">
-will add stuff here
+
+Similarly, calc_Q() is another function in t-SNE that is called a large number of times, specifically during each gradient descent iteration to calculate distances between points in the embedded 2D t-SNE space. Adding a parallel directive for the for loop as seen here allows all the GPU threads to perform independent distance calculations simultaneously. In addition to this, we specified the matrices to be copied in and out of the for loop, as well as adding a loop reduction for the running sum variable. 
 
 
 
@@ -201,13 +206,14 @@ We observe that the best performance is achieved when using vector size 32. For 
 
 ![image](./figures/speedup_tsne_vs_N_M.png)
 
+Using the same benchmarks as those in our PCA speedup calculations, we calculated t-SNE's speedup as a function of dataset size, we can see that openACC worked quite well, achieving a maximum speedup of around 3.2 for our largest dataset. As expected, larger dataset sizes showed greater speedup, while smaller datasets such as those with 1000 or less samples were actually slower than baseline due to communication overheads, compounded with the time taken to copy data in and out of the GPU. 
 
 
 **Total (PCA+t-SNE) speedup**
 
 ![image](./figures/speedup_total_vs_N_M.png)
 
-
+In terms of the speedup for the the entire code with both PCA and t-SNE sections combined, we saw a similar trend in speedup. The speedups seen were somewhere in between those reported in pca and those reported from tsne. We found the biggest speedup to be around 4 which was achieved with our biggest dataset (in terms of features and samples). 
 
 **Total speedup comparing to Python sklearn**
 
