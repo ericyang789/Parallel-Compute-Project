@@ -60,6 +60,8 @@ The other two functions that take a significant amount of time are the `Househol
 
 The original implementation plan was to accelerate the PCA part using OpenACC due to its advantages for the matrix multiplication problem, and to use OpenMP in order to parallelize the core t-SNE section of the code. This approach was followed, but resulted in insignificant speedups for reasons that were not possible to determine. Code for our attempted OpenMP parallelization can be found as 'tsne_fns_omp.h' within the 'parallel_c_tsne' folder. For this reason, and also because we were already utilizing GPU computing for the PCA part, we chose to parallelize core t-SNE using OpenACC. 
 
+TSNE parallelization
+
 ### Parallelization with OpenACC
 **PCA section**
 
