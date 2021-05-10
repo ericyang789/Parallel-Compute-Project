@@ -16,7 +16,7 @@ Initially in our application, we used a dataset where the RNA expression levels 
 ## C Implementation of t-SNE and the Need for Big Compute:
 At its core, t-SNE involved a tremendous amount of matrix operations, especially given the size of matrices in applications that utilize t-SNE. In the PCA component of t-SNE, the numerical complexity of the sequential part grows by O(N squared), where N is the number of samples in the matrix while the parallel part grows by O(N cubed). The remainder of the t-SNE algorithm additionally grows by (X squared), where X is the number of values in the M by N (number of features) matrix. It is estimated that for a dataset size X of 25,000 data matrix values, a single core t-SNE run can take around 800 minutes [5]. Given matrices that can contain millions of values, a parallel implementation of t-SNE can significantly reduce computation time. In addition, currently, there is no C implementation of t-SNE that exists. We hypothesize that a successful parallel implementation of t-SNE in C would benefit the dimensionality reduction community, by providing customizable parallelizability in a compiler programming language with a multitude of parallelization infrastructures available. 
 
-## Previous Work in Literature Further Drives Need for Big Compute
+## Existing Work in Literature Further Drives Need for Big Compute
 Python sklearn    
 CUDA version (+plot), they only allowed for 2-D, we allow any-D    
 ![image](https://github.com/CannyLab/tsne-cuda/blob/master/docs/simulated_speedup.png)
