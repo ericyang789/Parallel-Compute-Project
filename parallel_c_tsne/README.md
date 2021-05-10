@@ -30,7 +30,7 @@
             ./tsne
             
     The file prints out statements of the current execution steps as well as the execution times for reference.
-    The speedups for acc parallelization are discussed in the main README.
+    The expected speedups for acc parallelization are discussed in the main README.
     
     We also attempted OpenMP parallelization but did not yield fruitful results as discussed in the main README.
     If you want to test out OpenMP parallelization:
