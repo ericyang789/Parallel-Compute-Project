@@ -128,6 +128,8 @@ The document [Lab5_OpenACC_on_AWS.pdf](./AWS_OpenACC_guide/Lab5_OpenACC_on_AWS.p
 
 In order to compile the t-SNE algorithm on our data we have two options:
 
+If working on a GPU instance:
+
 - Compile without acceleration:
 
   ``pgcc tsne.c -o tsne``     
@@ -135,10 +137,19 @@ In order to compile the t-SNE algorithm on our data we have two options:
 - Compile with OpenACC acceleration:
 
   ``pgcc -acc -Minfo tsne.c -o tsne``     
+  
+If working on a non-GPU instance:
 
+- Compile using:
+
+  ``gcc tsne.c -o tsne``    
+  
 The, we can run the compiled code just using: 
 
 ​		``./tsne``
+
+
+
 
 
 ## Performance evaluation
