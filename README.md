@@ -170,8 +170,7 @@ The, we can run the compiled code just using:
 
 
 
-## Performance evaluation
-(speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done.    
+## Performance evaluation 
 
 
 
