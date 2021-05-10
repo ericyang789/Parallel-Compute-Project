@@ -20,13 +20,9 @@ At its core, t-SNE involved a tremendous amount of matrix operations, especially
 Python sklearn    
 CUDA version (+plot), they only allowed for 2-D, we allow any-D    
 ![image](https://github.com/CannyLab/tsne-cuda/blob/master/docs/simulated_speedup.png)
+   
 
-## Platform, Application and Programming Model
-AWS    
-OpenACC    
-Many-core, GPU accelerated computing    
-
-## Code Profiling and Parallel Implementation
+## Code Profiling
 
 ### Code profiling    
 We have profiled the execution time of the main sections of our code in order to identify the biggest bottlenecks. With this information we aimed to guide our parallelization efforts in a logical manner, focusing on the functions that take most of the execution time. 
@@ -51,12 +47,14 @@ The following table shows the percentage of time taken for each of the main sect
 
 The main observation from the code profiling is that the PCA part takes about 70% of the time, much longer than the core t-SNE algorithm which only accounts for approximately 30% of the time. In the following section we define our main parallelization goals based on the results obtained in the code profiling. 
 
+## Platform, Application, Programming Model, and Parallel Implementation
+
 ### Implementation Decisions
 The PCA algorithm was our first target for parallelization for several reasons. The first and most obvious one is that PCA took most of the time. Additionally, if we look in more detail at the PCA profiling, we can see that the single function `Calculating Covariance Matrix` takes 62% of the total computational time. This function consists of a matrix multiplication of our data matrix with its transpose, which promised a big potential for being parallelizable using OpenACC. Another important advantage is that this function is only called once in the whole algorithm, which, as opposed to other functions in the core t-SNE part, further simplifies and increases the efficiency of its parallelization.
 
 The other two functions that take a significant amount of time are the `Householders Reduction to Bidiagonal Form` (4.34%) and the `Givens Reduction to Bidiagonal Form` (1.66%), which are the two most important functions in the Singular Value Decomposition (SVD) step used to perform PCA. These two functions cannot be successfully parallelized because they have many data dependencies and complicated matrix update steps that are intrinsically serial. The parallelization of these functions would require creating additional code, which would add an unaffordable level of complexity and would probably introduce important overheads for small or medium matrices. Indeed, other authors have reported that parallelization improvements are only observed if they use matrices of really big dimensions [6], a lot bigger than what we would be using for our project. Taking this into consideration, and the fact that these two functions together only account for 6% of the serial total time, we have decided to focus on parallelizing the  function `Calculating Covariance Matrix`. 
 
-The original implementation plan was to accelerate the PCA part using OpenACC due to its advantages for the matrix multiplication problem, and to use OpenMP in order to parallelize the core t-SNE section of the code. This approach was followed, but resulted in insignificant speedups for reasons that were not possible to determine. Code for our attempted OpenMP parallelization can be found as 'tsne_fns_omp.h' within the 'parallel_c_tsne' folder. For this reason, and also because we were already utilizing GPU hardware for the PCA part, we chose to parallelize core t-SNE using OpenACC. 
+The original implementation plan was to accelerate the PCA part using OpenACC due to its advantages for the matrix multiplication problem, and to use OpenMP in order to parallelize the core t-SNE section of the code. This approach was followed, but resulted in insignificant speedups for reasons that were not possible to determine. Code for our attempted OpenMP parallelization can be found as 'tsne_fns_omp.h' within the 'parallel_c_tsne' folder. For this reason, and also because we were already utilizing GPU hardware/instance for the PCA part, we chose to parallelize core t-SNE using OpenACC. 
 
 The t-SNE's algorithm contains many repetitive and identical matrix operations which are well suited for GPU computing. Based on our initial profiling of the t-SNE code as well as from our understanding of the t-SNE algorithm, we identified calc_perplexity_diff() and calc_Q() as the two main bottlenecks in the algorithm. 
 
