@@ -92,7 +92,7 @@ Regarding the acceleration of the matrix multiplication, we have added "pragma a
 
 <img width="631" alt="calc_perplexity" src="https://user-images.githubusercontent.com/44482565/117586589-aabb5780-b14b-11eb-9891-0c55375647b4.png">
 
-Using OpenACC, we parallelized this function with acc parallel directives for both of its for loops, in addition to a loop reduction as well as a specification for the vector_length or number of threads per block to be used. The acc parallel directive here distributes the independent perplexity calculations across different GPU nodes, allowing them all to run simultaneously. 
+Using OpenACC, we parallelized this function with acc parallel directives for both of its for loops, in addition to a loop reduction as well as a specification for the vector_length or number of threads per block to be used. The acc parallel directives here distribute the independent perplexity calculations across different GPU threads (defined by vector_length), allowing them all to run simultaneously. 
 
 
 2. calc_Q() acceleration:
