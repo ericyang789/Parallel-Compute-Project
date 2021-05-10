@@ -73,8 +73,8 @@ One can expect these results for the given parameters below if running the OpenM
     Time (PCA): 26.446425 
     Starting tsne 
     Starting gradient descent 
-    Time (TSNE): 94.025792 
-    Time Total (PCA + TSNE): 120.472271 
+    Time (TSNE): 101.025792 
+    Time Total (PCA + TSNE): 127.472271 
       
 On the other hand the results from running the same code in serial are given below: 
 
