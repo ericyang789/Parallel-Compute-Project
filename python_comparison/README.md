@@ -5,7 +5,9 @@ This folder contain the code, results and reproducibility information for the py
 Folder structure:
 
 	python_tsne.ipynb/
-				contains the python t-SNE imlementation for MNIST dataset. This code was adapted from the code for the MCB 112 course at Harvard. The original code can be found here: http://mcb112.org/w13/w13-answers.html.
+				contains the python t-SNE imlementation for MNIST dataset. 
+				This code was adapted from the code for the MCB 112 course at Harvard. 
+				The original code can be found here: http://mcb112.org/w13/w13-answers.html.
 
 	execution_time.ipynb/ 
 				contains the code for plotting the serial python and C t-SNE results for MNIST datasets of varying size
@@ -13,6 +15,7 @@ Folder structure:
 Parameters and data used for python execution:
 
 	PCA: K=50 used for dimensionality reduction
+
 	target_perplexity: 5.0
 
 	Data: 
@@ -22,4 +25,5 @@ Parameters and data used for python execution:
 
 Reproducibility:
 
-	The code was run using python 3 on a MacBook Pro with 16GB memory. All the packages needed execute the code are imported at the top of the script.
+	The code was run using python 3 on a MacBook Pro with 16GB memory. 
+	All the packages needed execute the code are imported at the top of the script.
