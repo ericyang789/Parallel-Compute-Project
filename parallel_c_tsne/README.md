@@ -63,6 +63,15 @@
       Time (TSNE): 91.534762 
       Time Total (PCA + TSNE): 117.653525
       
+      Below are some regions in the t-SNE code we attempted to parallelize:
+      
+      <img width="637" alt="calc_perplexity_omp" src="https://user-images.githubusercontent.com/44482565/117675285-03880000-b1df-11eb-812c-082f64ae1cf7.png">
+      
+      One region is the for loop within our calc_perplexity_diff() function which calculates the perplexity for a distance matrix row given sigma. We defined a pragma omp parallel directive in order to allow the calculations to be distributed and performed independently by several cores. We also defined which variables are to be shared or private. 
+
+<img width="549" alt="calc_sigmas_omp" src="https://user-images.githubusercontent.com/44482565/117675457-29150980-b1df-11eb-8b0a-28e1460ca5da.png">
+      
+      Another region was the while loops within our calc_sigmas() function. We defined a pragma omp parallel directive in order to allow both while loops to be performed simulatenously and independently across different cores. 
       
       
       
