@@ -190,7 +190,7 @@ We observe that the best performance is achieved when using vector size 32. For 
 
 ![image](./figures/speedup_tsne_vs_N_M.png)
 
-Using the same dataset size benchmarks as those in our PCA speedup calculations, we calculated t-SNE's speedup as a function of dataset size, we can see that openACC worked quite well, achieving a maximum speedup of around 3.2 for our largest dataset. As expected, larger dataset sizes showed greater speedup, while smaller datasets such as those with 1000 or less samples were actually slower than baseline due to communication overheads, compounded with the time taken to copy data in and out of the GPU. 
+Using the same dataset size benchmarks as those in our PCA speedup calculations, we calculated t-SNE's speedup as a function of dataset size, we can see that openACC worked quite well, achieving a maximum speedup of around 3.2 for our largest dataset. As expected, larger dataset sizes showed greater speedup, while smaller datasets such as those with 1000 or less samples were actually slower than baseline due to communication overheads, in addition to the time taken to copy data in and out of the GPU. 
 
 
 **Total (PCA+t-SNE) speedup**
