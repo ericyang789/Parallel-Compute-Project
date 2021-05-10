@@ -64,9 +64,9 @@ The t-SNE's algorithm contains many repetitive and identical matrix operations w
 
 <img width="415" alt="calc_perplexity_pseudocode" src="https://user-images.githubusercontent.com/44482565/117638112-1980cb00-b1b5-11eb-9509-5cbbda6db91f.png">
 
-The pseudo code shown here describes the loop in which calc_perplexity_diff() is being called. As seen, calc_perplexity_diff() is repeatedly called to perform a rootfinding bisection search to find the sigma value that achieves the target perplexity. While one call of the function itself is relatively quick (~0.004s) we observed from our initial code profiling that t-SNE calls this function hundreds of thousands of times, resulting in long computation times. 
+The pseudo code shown here describes the loop in which calc_perplexity_diff() is being called. As seen, calc_perplexity_diff() is repeatedly called to perform a rootfinding bisection search to converge to a sigma value that achieves the target perplexity. While one call of the function itself is relatively quick (~0.004s) we observed from our initial code profiling that t-SNE calls this function hundreds of thousands of times, resulting in long computation times. 
 
-Similarly, calc_Q() is another function in t-SNE that is called a large number of times, specifically during each gradient descent iteration to calculate distances between points in the embedded 2D t-SNE space. Both, calc_Q() and calc_perplexity_diff() scale with the size of the dataset, which make them good targets for parallelization.
+Similarly, calc_Q() is another function in t-SNE that is called a large number of times, specifically during each gradient descent iteration to calculate distances between points in the embedded 2D t-SNE space. Both, calc_Q() and calc_perplexity_diff() scale with the size of the dataset i.e. number of points, which make them good targets for parallelization.
 
 ### Parallelization with OpenACC
 **PCA section**
