@@ -45,7 +45,8 @@
     
             ./tsne
   
-    One can expect these results if running the OpenMP parallelization with the AWS instance type specified in the main README.
+    One can expect these results for the given parameters below if running the OpenMP parallelization with the AWS instance type specified in the main README.
+    
       M: 2500
       N: 784
       Starting to load data 
