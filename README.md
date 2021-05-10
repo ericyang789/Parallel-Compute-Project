@@ -29,16 +29,26 @@ The dataset is commonly used in computer vision and machine learning application
 
 At its core, t-SNE involved a tremendous amount of matrix operations, especially given the size of matrices in applications that utilize t-SNE. In the PCA component of t-SNE, the numerical complexity of the sequential part grows by O(M squared), where M is the number of samples in the matrix while the parallel part grows by O(M cubed). The remainder of the t-SNE algorithm additionally grows by (N squared), where N is the number of features in the M by N matrix. 
 
-t-SNE is most commonly implemented in lanaguages such as Python, R and MATLAB. 
+### Existing Work in Literature Further Drives Need for Big Compute
+
+t-SNE is most commonly implemented in lanaguages such as Python, R and MATLAB. A number of these implementations are available online. The graphs below [5] shows a comparison of the runtimes in python for a number of dimensionality reduction techniques for various dataset sizes going up to 25,000. We are interested in the pink (t-SNE) and green (multicore t-SNE) lines labeled on the graph. For a dataset of size 25,000 the serial t-SNE takes around 800 min whilst the multicore t-SNE takes around 550min offering a speed up of a little under 1.5 times. Despite the improvement, these execution times are still impractically long, especially when considering that gene expression matrices can have 100s of thousands of samples for 1000s of points, motivating the need for further speed up of the algorithm. 
+
+![image](./figures/python_execution_time_graphs.png)
 
 
-It is estimated that for a dataset size X of 25,000 data matrix values, a single core t-SNE run can take around 800 minutes [5]. Given matrices that can contain millions of values, a parallel implementation of t-SNE can significantly reduce computation time. In addition, currently, there is no C implementation of t-SNE that exists. We hypothesize that a successful parallel implementation of t-SNE in C would benefit the dimensionality reduction community, by providing customizable parallelizability in a compiler programming language with a multitude of parallelization infrastructures available. 
+As parallel python implementations have already been explored in literature without sufficient speed up, we decided to parallelise a compiler language implementation of t-SNE. A lower level langauge implementation (specifically lower level compared to Python, R and MATLAB) should in theory provide substantial speed up, which can then be further improved through parallelisation tehcniques. In particular, we settled on using C for which as far as we are away there was no implementation of t-SNE that exists. We hypothesize that a successful parallel implementation of t-SNE in C would benefit the dimensionality reduction community, by providing customizable parallelizability in a compiler programming language with a multitude of parallelization infrastructures available. 
 
-## Existing Work in Literature Further Drives Need for Big Compute
-Python sklearn    
-CUDA version (+plot), they only allowed for 2-D, we allow any-D    
+### CUDA implementation
+One lower level implementations of t-SNE we were able to find was written in CUDA and achieved impressive results which are shown below. A few points worth bringing to attention are the X-axis in the plot (which is the number of points not the number of samples) and the fact that this implementation only allows reduction to 2 dimensions (with the authors detailing on the GitHub repository that they do not intend on implementing the code for more dimensions). Since C is a higher level and easier to work with langauge than CUDA the team felt that a C implementation would be beneficial at large as it would open the door for further parallelisation experiments (beyon the work done by this team) as well as allowing reduction to more than 2 dimensions.
+
 ![image](https://github.com/CannyLab/tsne-cuda/blob/master/docs/simulated_speedup.png)
    
+### C implementation
+
+A more detailed explanation of our C implementation can be found in the README file in the serial_c_tsne folder. Below we provide a plot of the execution times for our sereal C t-SNE (orange) and a python serial t-SNE impelmentation (blue) the code for which can be found in the python_comparison folder in the repository.
+
+
+
 
 ## Code Profiling
 
@@ -72,17 +82,7 @@ The PCA algorithm was our first target for parallelization for several reasons. 
 
 The other two functions that take a significant amount of time are the `Householders Reduction to Bidiagonal Form` (4.34%) and the `Givens Reduction to Bidiagonal Form` (1.66%), which are the two most important functions in the Singular Value Decomposition (SVD) step used to perform PCA. These two functions cannot be successfully parallelized because they have many data dependencies and complicated matrix update steps that are intrinsically serial. The parallelization of these functions would require creating additional code, which would add an unaffordable level of complexity and would probably introduce important overheads for small or medium matrices. Indeed, other authors have reported that parallelization improvements are only observed if they use matrices of really big dimensions [6], a lot bigger than what we would be using for our project. Taking this into consideration, and the fact that these two functions together only account for 6% of the serial total time, we have decided to focus on parallelizing the  function `Calculating Covariance Matrix`. 
 
-The original implementation plan was to accelerate the PCA part using OpenACC due to its advantages for the matrix multiplication problem, and to use shared memory parallel proceessing (OpenMP) in order to parallelize the core t-SNE section of the code. This approach was followed, but resulted in insignificant speedups or even speedups smaller than 1, which we think are associated to parallelization overheads. Code for our attempted OpenMP parallelization can be found as 'tsne_fns_omp.h' within the 'parallel_c_tsne' folder. 
-
-Below are some examples of the places in the t-SNE code we tried to parallelize using OpenMP. We identified these parallelizable locations in the code through code profiling, and they will be discussed in more detail further below.  
-
-<img width="637" alt="calc_perplexity_omp" src="https://user-images.githubusercontent.com/44482565/117670238-472c3b00-b1da-11eb-82f2-1f897d39ade9.png">
-
-<img width="549" alt="calc_sigmas_omp" src="https://user-images.githubusercontent.com/44482565/117670256-4b585880-b1da-11eb-93a1-d86d2721c9d2.png">
-
- None of our OpenMP directives resulted in significant speedup. This could be due to a combination of large overheads and a dataset size that is too small to effectively take advantage of shared-memory parallel processing.
-
-For the reason, and also because we were already utilizing GPU hardware/instance for PCA, we chose to accelerate core t-SNE using OpenACC. 
+The original implementation plan was to accelerate the PCA part using OpenACC due to its advantages for the matrix multiplication problem, and to use OpenMP in order to parallelize the core t-SNE section of the code. This approach was followed, but resulted in insignificant speedups or even speedups smaller than 1, which we think are associated to parallelization overheads. Code for our attempted OpenMP parallelization can be found as 'tsne_fns_omp.h' within the 'parallel_c_tsne' folder. For this reason, and also because we were already utilizing GPU hardware/instance for PCA, we chose to accelerate core t-SNE using OpenACC. 
 
 The t-SNE's algorithm contains many repetitive and identical matrix operations which are well suited for GPU computing. Based on our profiling of the t-SNE code, as well as from our understanding of the t-SNE algorithm, we identified calc_perplexity_diff() and calc_Q() as the two main bottlenecks in terms of computation time. 
 
@@ -180,7 +180,8 @@ The, we can run the compiled code just using:
 
 
 
-## Performance evaluation 
+## Performance evaluation
+(speed-up, throughput, weak and strong scaling) and discussion about overheads and optimizations done.    
 
 
 
@@ -237,9 +238,7 @@ Using the same dataset size benchmarks as those in our PCA speedup calculations,
 
 In terms of the speedup for the the entire code with both PCA and t-SNE sections combined, we saw a similar trend in speedup. The speedups seen were somewhere in between those reported in pca and those reported from tsne. We found the biggest speedup to be around 4 which was achieved with our biggest dataset (in terms of features and samples). 
 
-**Total speedup comparing to Python implementation**
-
-Comparing to the existing Python implementation, we saw that our accelerated C implementation achieved significant speedup, with the effect most noticeable with larger data sizes.
+**Total speedup comparing to Python sklearn**
 
 ![image](./figures/speedup_total_CvsPython_vs_M.png)
 
