@@ -74,7 +74,7 @@ The other two functions that take a significant amount of time are the `Househol
 
 The original implementation plan was to accelerate the PCA part using OpenACC due to its advantages for the matrix multiplication problem, and to use shared memory parallel proceessing (OpenMP) in order to parallelize the core t-SNE section of the code. This approach was followed, but resulted in insignificant speedups or even speedups smaller than 1, which we think are associated to parallelization overheads. Code for our attempted OpenMP parallelization can be found as 'tsne_fns_omp.h' within the 'parallel_c_tsne' folder. 
 
-Below are some examples of the places in the t-SNE code we tried to parallelize using OpenMP. We identified these locations in the code through code profiling, and these will be discussed in more detailed further below. 
+Below are some examples of the places in the t-SNE code we tried to parallelize using OpenMP. 
 
 <img width="637" alt="calc_perplexity_omp" src="https://user-images.githubusercontent.com/44482565/117670238-472c3b00-b1da-11eb-82f2-1f897d39ade9.png">
 
@@ -237,7 +237,9 @@ Using the same dataset size benchmarks as those in our PCA speedup calculations,
 
 In terms of the speedup for the the entire code with both PCA and t-SNE sections combined, we saw a similar trend in speedup. The speedups seen were somewhere in between those reported in pca and those reported from tsne. We found the biggest speedup to be around 4 which was achieved with our biggest dataset (in terms of features and samples). 
 
-**Total speedup comparing to Python sklearn**
+**Total speedup comparing to Python implementation**
+
+Comparing our accelerated algorithm to the existing Python implementation, we saw that we achieved significant speedup, with effects most noticeable with larger data sizes. 
 
 ![image](./figures/speedup_total_CvsPython_vs_M.png)
 
