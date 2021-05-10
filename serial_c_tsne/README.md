@@ -33,19 +33,19 @@
             
     read_in_data.h/
     
-            script to read in an M x N array of data saved in the ubyte format called within the tsne.c file
+            script to read in an Ms x Ns array of data saved in the ubyte format called within the tsne.c file
             this was addapted from the following implementation https://github.com/takafumihoriuchi/MNIST_for_C
-            path to data file and the dimension (M and N) must be defined at the top of the scrips
+            path to data file and the dimension (Ms and Ns) must be defined at the top of the scrips
             the script is called withing tsne.c using the load_data() function
-            data is read into the M x N 'data' array
+            data is read into the Ms x Ns 'data' array
             
     read_csv.h/
     
-            script to read in an M x N array of data saved in a CSV format called within the tsne.c file
+            script to read in an Mr x Nr array of data saved in a CSV format called within the tsne.c file
             the CSV file must not have any headers
-            path to data file and the dimension (M and N) must be defined at the top of the scrips
+            path to data file and the dimension (Mr and Nr) must be defined at the top of the scrips
             the script is called withing tsne.c using the load_data() function
-            data is read into the M x N 'data' array
+            data is read into the Mr x Nr 'data' array
             
                     
                     
@@ -59,7 +59,7 @@
                     both read in files have been defined in such a way that no other parts of tsne.c need to be changed
                     
                     within the chosen read in file you must change the path to the data location (default data folder one directory up)
-                    dimensions of the data to be read in must also be defined (M=number of rows, N =number of columns)
+                    dimensions of the data to be read in must also be defined (Mr and Ms =number of rows, Nr and Ns =number of columns)
     
             Define dimensions: 
             
