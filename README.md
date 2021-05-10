@@ -154,7 +154,6 @@ Using OpenACC, we parallelized this function with acc parallel directives for bo
 
 
 2. `calc_Q()` acceleration:
-3. 
 <p align="center">
   <img width="401" alt="calc_Q" src="https://user-images.githubusercontent.com/44482565/117586601-c1fa4500-b14b-11eb-83dd-f7b8d50ae17d.png">
 </p>
